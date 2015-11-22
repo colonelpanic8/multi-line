@@ -257,5 +257,4 @@ FIND-STRATEGY is a class with the method multi-line-find-next."
   (multi-line-adjust-whitespace (make-instance multi-line-never-newline)))
 
 (provide 'multi-line)
-;; flycheck-disabled-checkers: (emacs-lisp-checkdoc)
 ;;; multi-line.el ends here
