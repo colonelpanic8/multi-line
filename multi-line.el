@@ -32,6 +32,8 @@
 
 ;;; Code:
 
+(require 'eieio)
+
 (defvar multi-line-config)
 
 (defun multi-line-lparenthesis-advance ()
