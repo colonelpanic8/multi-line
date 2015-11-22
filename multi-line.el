@@ -51,8 +51,11 @@
 
 (defmethod multi-line-enter ((enter multi-line-forward-sexp-enter-strategy))
   (condition-case nil
-      (while (not (looking-at (oref enter :done-regex)))
-        (forward-sexp))
+      (let (last-point)
+        (while (not (or (looking-at (oref enter :done-regex))
+                        (equal last-point (point))))
+          (setq last-point (point))
+          (forward-sexp)))
     ('error
      (funcall (oref enter :inside-fn))))
   (funcall (oref enter :advance-fn)))
@@ -91,8 +94,6 @@
   ((spacer :initarg :spacer :initform " ")))
 
 (defmethod multi-line-respace ((respacer multi-line-never-newline) index markers)
-  (when (equal index (- (length markers) 1))
-    (multi-line-clear-whitespace-at-point))
   (when (not (or (equal 0 index)
                  (equal index (- (length markers) 1))))
         (insert (oref respacer :spacer))))
@@ -163,7 +164,7 @@ FIND-STRATEGY is a class with the method multi-line-find-next."
                   (multi-line-get-find-strategy multi-line-config))))
     (cl-loop for marker being the elements of markers using (index i) do
              (goto-char (marker-position marker))
-             ;; (multi-line-clear-whitespace-at-point)
+             (multi-line-clear-whitespace-at-point)
              (multi-line-respace respacer i markers))))
 
 (defclass multi-line-config-manager ()
@@ -225,7 +226,7 @@ FIND-STRATEGY is a class with the method multi-line-find-next."
   (multi-line-set-find-strategy  multi-line-config  'emacs-lisp-mode
                                  (make-instance
                                   multi-line-forward-sexp-find-strategy
-                                  :split-regex   "[[:space:]]+"
+                                  :split-regex   "[[:space:]\n]+"
                                   :done-regex  "[[:space:]]*)"
                                   :split-advance-fn  'multi-line-lisp-advance-fn))
 
@@ -246,14 +247,17 @@ FIND-STRATEGY is a class with the method multi-line-find-next."
 (multi-line-set-per-major-mode-strategies)
 
 ;;;###autoload
-(defun multi-line ()
-  "Multi-line the statement at point."
-  (interactive)
-  (multi-line-adjust-whitespace (multi-line-get-respacer-strategy
-                                 multi-line-config)))
+(defun multi-line (arg)
+  "Multi-line the statement at point.
+
+When ARG is provided single-line the statement at point instead."
+  (interactive "P")
+  (if arg (multi-line-single-line)
+    (multi-line-adjust-whitespace
+     (multi-line-get-respacer-strategy multi-line-config))))
 
 ;;;###autoload
-(defun multi-line-singleline ()
+(defun multi-line-single-line ()
   "Single-line the statement at point."
   (interactive)
   (multi-line-adjust-whitespace (make-instance multi-line-never-newline)))
