@@ -135,6 +135,33 @@
        (oref respacer :newline-respacer)
      (oref respacer :default-respacer)) index markers))
 
+(defclass multi-line-additional-action-decorator ()
+  ((respacer :initarg :respacer :initform
+             (make-instance multi-line-always-newline))
+   (additional-action :initarg :additional-action)))
+
+(defmethod multi-line-respace ((action multi-line-additional-action-decorator)
+                               index markers)
+  (multi-line-respace (oref action :respacer) index markers)
+  (funcall (oref action :additional-action) index markers))
+
+(defun multi-line-trailing-comma (index markers)
+  "Add a trailing comma when at the last marker.
+
+INDEX is the index that will be used to determine whether or not
+the action should be taken.  MARKERS is the list of markers that
+were generated for the statement."
+  (when (equal index (- (length markers) 1))
+    (re-search-backward "[^[:space:]\n]")
+    (when (not (looking-at ","))
+      (forward-char)
+      (insert ","))))
+
+(defun multi-line-trailing-comma-respacer (respacer)
+  "Apply a comma adding multi-line-additional-action-decorator to RESPACER."
+  (make-instance multi-line-additional-action-decorator :respacer respacer
+                 :additional-action 'multi-line-trailing-comma))
+
 (defun multi-line-get-markers (enter-strategy find-strategy)
   "Get the markers for multi-line candidates for the statement at point.
 
@@ -220,29 +247,40 @@ FIND-STRATEGY is a class with the method multi-line-find-next."
   (re-search-forward "[^[:space:]\n]")
   (backward-char))
 
+(defvar multi-line-skip-respacer
+  (make-instance multi-line-always-newline
+                 :skip-first t :skip-last t))
+
+(defvar multi-line-skip-fill-respacer
+  (make-instance multi-line-column-number
+                 :newline-respacer multi-line-skip-respacer))
+
 (defun multi-line-set-per-major-mode-strategies ()
   "Set language specific strategies."
   (interactive)
-  (multi-line-set-find-strategy  multi-line-config  'emacs-lisp-mode
-                                 (make-instance
-                                  multi-line-forward-sexp-find-strategy
-                                  :split-regex   "[[:space:]\n]+"
-                                  :done-regex  "[[:space:]]*)"
-                                  :split-advance-fn  'multi-line-lisp-advance-fn))
 
-  (let ((newline-respacer
-         (make-instance multi-line-always-newline
-                        :skip-first t :skip-last t)))
-    (multi-line-set-respacer-strategy
-     multi-line-config 'emacs-lisp-mode (make-instance  multi-line-column-number
-                                                        :newline-respacer
-                                                        newline-respacer)))
+  ;; emacs-lisp
+  (multi-line-set-find-strategy multi-line-config 'emacs-lisp-mode
+                                (make-instance
+                                 multi-line-forward-sexp-find-strategy
+                                 :split-regex "[[:space:]\n]+"
+                                 :done-regex "[[:space:]]*)"
+                                 :split-advance-fn 'multi-line-lisp-advance-fn))
 
-  ;; No match for done regex
+  (multi-line-set-respacer-strategy multi-line-config 'emacs-lisp-mode
+                                    multi-line-skip-fill-respacer)
+
+  ;; No match for done regex - termination condition is hitting
   (multi-line-set-enter-strategy  multi-line-config  'emacs-lisp-mode
                                   (make-instance
                                    multi-line-forward-sexp-enter-strategy
-                                   :done-regex "``````")))
+                                   :done-regex "``````"))
+
+  ;; golang
+  (multi-line-set-respacer-strategy multi-line-config
+                                    'go-mode
+                                    (multi-line-trailing-comma-respacer
+                                     (make-instance multi-line-column-number))))
 
 (multi-line-set-per-major-mode-strategies)
 
