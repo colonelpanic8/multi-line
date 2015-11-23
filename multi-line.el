@@ -120,14 +120,14 @@
   (when (multi-line-should-newline respacer index markers)
     (newline-and-indent)))
 
-(defclass multi-line-column-number ()
+(defclass multi-line-fill-respacer ()
   ((newline-at :initarg :newline-at :initform 80)
    (newline-respacer :initarg :newline-respacer :initform
                        (make-instance multi-line-always-newline))
    (default-respacer :initarg :default-respacer :initform
      (make-instance multi-line-never-newline))))
 
-(defmethod multi-line-should-newline ((respacer multi-line-column-number)
+(defmethod multi-line-should-newline ((respacer multi-line-fill-respacer)
                                       index markers)
   (let ((marker-length (length markers)))
     (or (and (equal 0 index))
@@ -137,7 +137,7 @@
                (goto-char (marker-position (nth (+ index 1) markers )))
                (> (current-column) (oref respacer :newline-at)))))))
 
-(defmethod multi-line-respace ((respacer multi-line-column-number) index markers)
+(defmethod multi-line-respace ((respacer multi-line-fill-respacer) index markers)
   (multi-line-respace
    (if (multi-line-should-newline respacer index markers)
        (oref respacer :newline-respacer)
@@ -254,8 +254,16 @@ FIND-STRATEGY is a class with the method multi-line-find-next."
                  :skip-first t :skip-last t))
 
 (defvar multi-line-skip-fill-respacer
-  (make-instance multi-line-column-number
+  (make-instance multi-line-fill-respacer
                  :newline-respacer multi-line-skip-respacer))
+
+(defvar multi-line-skip-fill-stragety
+  (make-instance multi-line-strategy
+                 :respace multi-line-skip-fill-respacer))
+
+(defvar multi-line-fill-stragety
+  (make-instance multi-line-strategy
+                 :respace (make-instance multi-line-fill-respacer)))
 
 (defun multi-line-set-per-major-mode-strategies ()
   "Set language specific strategies."
@@ -280,7 +288,7 @@ FIND-STRATEGY is a class with the method multi-line-find-next."
    (make-instance multi-line-strategy
                   :respace
                   (multi-line-trailing-comma-respacer
-                   (make-instance multi-line-column-number)))))
+                   (make-instance multi-line-fill-respacer)))))
 
 (multi-line-set-per-major-mode-strategies)
 
