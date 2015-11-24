@@ -34,6 +34,8 @@
 
 (require 'eieio)
 (require 'multi-line-decorator)
+(require 'multi-line-respace)
+(require 'multi-line-shared)
 
 (defun multi-line-lparenthesis-advance ()
   "Advance to the beginning of a statement that can be multi-lined."
@@ -98,52 +100,6 @@
       nil)
     (when (equal last :candidate) (funcall (oref strategy :split-advance-fn)))
     last))
-
-(defclass multi-line-never-newline ()
-  ((spacer :initarg :spacer :initform " ")))
-
-(defmethod multi-line-respace ((respacer multi-line-never-newline) index markers)
-  (when (not (or (equal 0 index)
-                 (equal index (- (length markers) 1))))
-        (insert (oref respacer :spacer))))
-
-(defclass multi-line-always-newline ()
-  ((always-first :initarg :skip-first :initform nil)
-   (always-last :initarg :skip-last :initform nil)))
-
-(defmethod multi-line-should-newline ((respacer multi-line-always-newline)
-                                      index markers)
-  (let ((marker-length (length markers)))
-    (not (or (looking-at "[[:space:]]*\n")
-             (and (equal 0 index) (oref respacer :skip-first))
-             (and (equal index (- marker-length 1)) (oref respacer :skip-last))))))
-
-(defmethod multi-line-respace ((respacer multi-line-always-newline) index markers)
-  (when (multi-line-should-newline respacer index markers)
-    (newline-and-indent)))
-
-(defclass multi-line-fill-respacer ()
-  ((newline-at :initarg :newline-at :initform 80)
-   (newline-respacer :initarg :newline-respacer :initform
-                       (make-instance multi-line-always-newline))
-   (default-respacer :initarg :default-respacer :initform
-     (make-instance multi-line-never-newline))))
-
-(defmethod multi-line-should-newline ((respacer multi-line-fill-respacer)
-                                      index markers)
-  (let ((marker-length (length markers)))
-    (or (and (equal 0 index))
-        (and (equal index (- marker-length 1)))
-        (and (< (+ index 1) marker-length)
-             (save-excursion
-               (goto-char (marker-position (nth (+ index 1) markers )))
-               (> (current-column) (oref respacer :newline-at)))))))
-
-(defmethod multi-line-respace ((respacer multi-line-fill-respacer) index markers)
-  (multi-line-respace
-   (if (multi-line-should-newline respacer index markers)
-       (oref respacer :newline-respacer)
-     (oref respacer :default-respacer)) index markers))
 
 (defun multi-line-get-markers (enter-strategy find-strategy)
   "Get the markers for multi-line candidates for the statement at point.
