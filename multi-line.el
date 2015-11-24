@@ -33,6 +33,7 @@
 ;;; Code:
 
 (require 'eieio)
+(require 'multi-line-decorator)
 
 (defun multi-line-lparenthesis-advance ()
   "Advance to the beginning of a statement that can be multi-lined."
@@ -113,7 +114,8 @@
 (defmethod multi-line-should-newline ((respacer multi-line-always-newline)
                                       index markers)
   (let ((marker-length (length markers)))
-    (not (or (and (equal 0 index) (oref respacer :skip-first))
+    (not (or (looking-at "[[:space:]]*\n")
+             (and (equal 0 index) (oref respacer :skip-first))
              (and (equal index (- marker-length 1)) (oref respacer :skip-last))))))
 
 (defmethod multi-line-respace ((respacer multi-line-always-newline) index markers)
@@ -143,33 +145,6 @@
        (oref respacer :newline-respacer)
      (oref respacer :default-respacer)) index markers))
 
-(defclass multi-line-additional-action-decorator ()
-  ((respacer :initarg :respacer :initform
-             (make-instance multi-line-always-newline))
-   (additional-action :initarg :additional-action)))
-
-(defmethod multi-line-respace ((action multi-line-additional-action-decorator)
-                               index markers)
-  (multi-line-respace (oref action :respacer) index markers)
-  (funcall (oref action :additional-action) index markers))
-
-(defun multi-line-trailing-comma (index markers)
-  "Add a trailing comma when at the last marker.
-
-INDEX is the index that will be used to determine whether or not
-the action should be taken.  MARKERS is the list of markers that
-were generated for the statement."
-  (when (equal index (- (length markers) 1))
-    (re-search-backward "[^[:space:]\n]")
-    (when (not (looking-at ","))
-      (forward-char)
-      (insert ","))))
-
-(defun multi-line-trailing-comma-respacer (respacer)
-  "Apply a comma adding multi-line-additional-action-decorator to RESPACER."
-  (make-instance multi-line-additional-action-decorator :respacer respacer
-                 :additional-action 'multi-line-trailing-comma))
-
 (defun multi-line-get-markers (enter-strategy find-strategy)
   "Get the markers for multi-line candidates for the statement at point.
 
@@ -182,25 +157,17 @@ FIND-STRATEGY is a class with the method multi-line-find-next."
                    collect (point-marker)))
     (nconc markers (list (point-marker)))))
 
-(defun multi-line-clear-whitespace-at-point ()
-  "Erase any surrounding whitespace."
-  (interactive)
-  (re-search-backward "[^[:space:]\n]")
-  (forward-char)
-  (let ((start (point)))
-    (re-search-forward "[^[:space:]\n]")
-    (backward-char)
-    (kill-region start (point))))
-
 (defclass multi-line-strategy ()
   ((enter :initarg :enter :initform
           (make-instance multi-line-up-list-enter-strategy))
    (find :initarg :find :initform
          (make-instance multi-line-forward-sexp-find-strategy))
    (respace :initarg :respace :initform
-            (make-instance multi-line-always-newline))
+            (multi-line-space-clearing-respacer
+             (make-instance multi-line-always-newline)))
    (sl-respace :initarg :sl-respace :initform
-               (make-instance multi-line-never-newline))))
+               (multi-line-space-clearing-respacer
+                (make-instance multi-line-never-newline)))))
 
 (defmethod multi-line-markers ((strategy multi-line-strategy))
   (multi-line-get-markers (oref strategy :enter) (oref strategy :find)))
@@ -216,7 +183,6 @@ FIND-STRATEGY is a class with the method multi-line-find-next."
 (defmethod multi-line-execute-one ((strategy multi-line-strategy)
                                    marker i markers respacer)
   (goto-char (marker-position marker))
-  (multi-line-clear-whitespace-at-point)
   (multi-line-respace respacer i markers))
 
 (defclass multi-line-major-mode-strategy-selector ()
