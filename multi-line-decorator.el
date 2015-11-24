@@ -35,7 +35,9 @@
 
 (defmacro multi-line-pre-decorator (name &rest forms)
   "Build a constructor with name NAME that builds respacers that
-execute FORMS before respacing."
+execute FORMS before respacing.  FORMS can use the variables index
+and markers which will be appropriately populated by the
+executor."
   `(defun ,name (respacer)
      (make-instance
       multi-line-decorator
@@ -46,7 +48,9 @@ execute FORMS before respacing."
 
 (defmacro multi-line-post-decorator (name &rest forms)
   "Build a constructor with name NAME that builds respacers that
-execute FORMS after respacing."
+execute FORMS after respacing.  FORMS can use the variables index
+and markers which will be appropriately populated by the
+executor."
   `(defun ,name (respacer)
      (make-instance
       multi-line-decorator
@@ -54,18 +58,6 @@ execute FORMS after respacing."
       :decorator (lambda (respacer index markers)
                    (multi-line-respace respacer index markers)
                    ,@forms))))
-
-(defun multi-line-add-trailing-comma (index markers)
-  "Add a trailing comma when at the last marker.
-
-INDEX is the index that will be used to determine whether or not
-the action should be taken.  MARKERS is the list of markers that
-were generated for the statement."
-  (when (equal index (- (length markers) 1))
-    (re-search-backward "[^[:space:]\n]")
-    (when (not (looking-at ","))
-      (forward-char)
-      (insert ","))))
 
 (multi-line-pre-decorator multi-line-space-clearing-respacer
                           (multi-line-clear-whitespace-at-point))
