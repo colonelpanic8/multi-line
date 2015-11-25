@@ -25,6 +25,9 @@
 (require 'eieio)
 (require 'multi-line-shared)
 
+(put 'multi-line-pre-decorator 'lisp-indent-function 'defun)
+(put 'multi-line-post-decorator 'lisp-indent-function 'defun)
+
 (defmacro multi-line-compose (name &rest funcs)
   "Build a new function with NAME that is the composition of FUNCS."
   `(defun ,name (arg)
@@ -80,10 +83,10 @@ by the executor."
             ,@forms))))
 
 (multi-line-pre-decorator multi-line-space-clearing-respacer
-                          (multi-line-clear-whitespace-at-point))
+  (multi-line-clear-whitespace-at-point))
 
 (multi-line-post-decorator multi-line-trailing-comma-respacer
-                           (multi-line-add-trailing-comma index markers))
+  (multi-line-add-trailing-comma index markers))
 
 (multi-line-post-all-decorator multi-line-reindenting-respacer
  (indent-region (marker-position (car markers))
