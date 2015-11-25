@@ -59,11 +59,24 @@ executor."
                    (multi-line-respace respacer index markers)
                    ,@forms))))
 
+(defmacro multi-line-post-all-decorator (name &rest forms)
+  "Build a constructor with name NAME that builds respacers that
+execute FORMS after respacing all splits.  FORMS can use the
+variables index and markers which will be appropriately populated
+by the executor."
+  `(multi-line-post-decorator
+   ,name ((when (equal index (- (length markers) 1))
+            ,@forms))))
+
 (multi-line-pre-decorator multi-line-space-clearing-respacer
                           (multi-line-clear-whitespace-at-point))
 
 (multi-line-post-decorator multi-line-trailing-comma-respacer
                            (multi-line-add-trailing-comma index markers))
+
+(multi-line-post-all-decorator multi-line-reindenting-respacer
+ (indent-region (marker-position (car markers))
+                (marker-position (nth index markers))))
 
 (provide 'multi-line-decorator)
 ;;; multi-line-decorator.el ends here
