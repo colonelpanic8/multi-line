@@ -25,6 +25,17 @@
 (require 'eieio)
 (require 'multi-line-shared)
 
+(defmacro multi-line-compose (name &rest funcs)
+  "Build a new function with NAME that is the composition of FUNCS."
+  `(defun ,name (arg)
+     (multi-line-compose-helper ,funcs)))
+
+(defmacro multi-line-compose-helper (funcs)
+  "Builds funcalls of FUNCS applied to the arg."
+  (if (equal (length funcs) 0)
+      (quote arg)
+    `(funcall ,(car funcs) (multi-line-compose-helper ,(cdr funcs)))))
+
 (defclass multi-line-decorator ()
   ((respacer :initarg :respacer)
    (decorator :initarg :decorator)))
