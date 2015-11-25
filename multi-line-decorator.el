@@ -92,5 +92,9 @@ by the executor."
  (indent-region (marker-position (car markers))
                 (marker-position (nth index markers))))
 
+(multi-line-compose multi-line-clearing-reindenting-respacer
+                    'multi-line-space-clearing-respacer
+                    'multi-line-reindenting-respacer)
+
 (provide 'multi-line-decorator)
 ;;; multi-line-decorator.el ends here
