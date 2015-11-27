@@ -1,5 +1,8 @@
 [[http://melpa.org/#/multi-line][file:http://melpa.org/packages/multi-line-badge.svg]]
 
+* Demo
+[[https://asciinema.org/a/dwft2l94f75x9l46wmdhbm5lh?t=4][https://asciinema.org/a/dwft2l94f75x9l46wmdhbm5lh.png]]
+
 * About
 multi-line aims to provide a flexible framework for automatically
 multi-lining and single-lining function invocations and definitions,
