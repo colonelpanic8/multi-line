@@ -119,10 +119,10 @@ FIND-STRATEGY is a class with the method multi-line-find-next."
    (find :initarg :find :initform
          (make-instance multi-line-forward-sexp-find-strategy))
    (respace :initarg :respace :initform
-            (multi-line-space-clearing-respacer
+            (multi-line-clearing-reindenting-respacer
              (make-instance multi-line-always-newline)))
    (sl-respace :initarg :sl-respace :initform
-               (multi-line-space-clearing-respacer
+               (multi-line-clearing-reindenting-respacer
                 (make-instance multi-line-never-newline)))))
 
 (defmethod multi-line-markers ((strategy multi-line-strategy))
@@ -130,11 +130,12 @@ FIND-STRATEGY is a class with the method multi-line-find-next."
 
 (defmethod multi-line-execute ((strategy multi-line-strategy)
                                for-single-line)
-  (let ((markers (multi-line-markers strategy))
-        (respacer (if for-single-line (oref strategy :sl-respace)
-                    (oref strategy :respace))))
-    (cl-loop for marker being the elements of markers using (index i) do
-             (multi-line-execute-one strategy marker i markers respacer))))
+  (save-excursion
+    (let ((markers (multi-line-markers strategy))
+          (respacer (if for-single-line (oref strategy :sl-respace)
+                      (oref strategy :respace))))
+      (cl-loop for marker being the elements of markers using (index i) do
+               (multi-line-execute-one strategy marker i markers respacer)))))
 
 (defmethod multi-line-execute-one ((strategy multi-line-strategy)
                                    marker i markers respacer)
@@ -181,12 +182,12 @@ FIND-STRATEGY is a class with the method multi-line-find-next."
 
 (defvar multi-line-skip-fill-stragety
   (make-instance multi-line-strategy
-                 :respace (multi-line-space-clearing-respacer
+                 :respace (multi-line-clearing-reindenting-respacer
                            multi-line-skip-fill-respacer)))
 
 (defvar multi-line-fill-stragety
   (make-instance multi-line-strategy
-                 :respace (multi-line-space-clearing-respacer
+                 :respace (multi-line-clearing-reindenting-respacer
                            (make-instance multi-line-fill-respacer))))
 
 (defun multi-line-set-per-major-mode-strategies ()

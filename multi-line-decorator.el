@@ -27,6 +27,7 @@
 
 (put 'multi-line-pre-decorator 'lisp-indent-function 'defun)
 (put 'multi-line-post-decorator 'lisp-indent-function 'defun)
+(put 'multi-line-post-all-decorator 'lisp-indent-function 'defun)
 
 (defmacro multi-line-compose (name &rest funcs)
   "Build a new function with NAME that is the composition of FUNCS."
@@ -79,8 +80,8 @@ execute FORMS after respacing all splits.  FORMS can use the
 variables index and markers which will be appropriately populated
 by the executor."
   `(multi-line-post-decorator
-   ,name ((when (equal index (- (length markers) 1))
-            ,@forms))))
+   ,name (when (equal index (- (length markers) 1))
+            ,@forms)))
 
 (multi-line-pre-decorator multi-line-space-clearing-respacer
   (multi-line-clear-whitespace-at-point))
@@ -89,8 +90,8 @@ by the executor."
   (multi-line-add-trailing-comma index markers))
 
 (multi-line-post-all-decorator multi-line-reindenting-respacer
- (indent-region (marker-position (car markers))
-                (marker-position (nth index markers))))
+  (indent-region (marker-position (car markers))
+                 (marker-position (nth index markers))))
 
 (multi-line-compose multi-line-clearing-reindenting-respacer
                     'multi-line-space-clearing-respacer
