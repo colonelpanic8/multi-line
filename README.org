@@ -44,11 +44,11 @@ More details about how to define custom respacers will be added here shortly.
 multi-line is still very much a work in progress. It is likely that there are kinks to iron out, especially in languages that have not yet been tested by the author. With that said, multi-line is designed to be as poly-lingual as possible. Though multi-line relies as much as possible on functions defined by major-mode like forward-sexp, it is likely that many languages will need small peices of additional custom code. Please feel free to file issues requesting support for any language.
 *** Officially Supported Languages
 The following languages are officially supported by multi-line
-**** python
-**** golang
-**** emacs-lisp
-**** javascript
-**** C/C++
+- python
+- golang
+- emacs-lisp
+- javascript
+- C/C++
 It is likely that multi-line will function pretty well in any language using typical brace/parenthesis/comma syntax, provided that the major mode has properly defined ~forward-sexp~ and ~indent-line~. If you find that multi-line works well without modification in your language of choice please file an issue to have it added to the list of officially supported languages.
 ** Contextual Behavior
 Multi-line can theoretically be configured to behave in different ways depending on arbitrary contextual factors. At the moment, there is only built-in infrastructure to define behavior on a per major mode basis, but with a bit of additional elisp, other contextual factors could determine multi-lining behavior. Github issues requesting such behavior are welcome.
