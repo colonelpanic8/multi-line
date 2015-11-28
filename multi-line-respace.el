@@ -54,8 +54,7 @@
     (newline-and-indent)))
 
 (defclass multi-line-fill-respacer ()
-  ((newline-at :initarg :newline-at :initform 80)
-   (newline-respacer :initarg :newline-respacer :initform
+  ((newline-respacer :initarg :newline-respacer :initform
                        (make-instance multi-line-always-newline))
    (default-respacer :initarg :default-respacer :initform
      (make-instance multi-line-never-newline))))
@@ -68,13 +67,24 @@
         (and (< (+ index 1) marker-length)
              (save-excursion
                (goto-char (marker-position (nth (+ index 1) markers )))
-               (> (current-column) (oref respacer :newline-at)))))))
+               (> (current-column) (multi-line-get-fill-column respacer)))))))
 
 (defmethod multi-line-respace ((respacer multi-line-fill-respacer) index markers)
   (multi-line-respace
    (if (multi-line-should-newline respacer index markers)
        (oref respacer :newline-respacer)
      (oref respacer :default-respacer)) index markers))
+
+(defclass multi-line-fixed-fill-respacer (multi-line-fill-respacer)
+  ((newline-at :initarg :newline-at :initform 80)))
+
+(defmethod multi-line-get-fill-column ((respacer multi-line-fixed-fill-respacer))
+  (oref respacer :newline-at))
+
+(defclass multi-line-fill-column-respacer (multi-line-fill-respacer) nil)
+
+(defmethod multi-line-get-fill-column ((respacer multi-line-fill-column-respacer))
+  fill-column)
 
 (provide 'multi-line-respace)
 ;;; multi-line-respace.el ends here

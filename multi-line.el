@@ -177,7 +177,7 @@ FIND-STRATEGY is a class with the method multi-line-find-next."
                  :skip-first t :skip-last t))
 
 (defvar multi-line-skip-fill-respacer
-  (make-instance multi-line-fill-respacer
+  (make-instance multi-line-fixed-fill-respacer
                  :newline-respacer multi-line-skip-respacer))
 
 (defvar multi-line-skip-fill-stragety
@@ -188,8 +188,12 @@ FIND-STRATEGY is a class with the method multi-line-find-next."
 (defvar multi-line-fill-stragety
   (make-instance multi-line-strategy
                  :respace (multi-line-clearing-reindenting-respacer
-                           (make-instance multi-line-fill-respacer))))
+                           (make-instance multi-line-fixed-fill-respacer))))
 
+(defvar multi-line-fill-column-strategy
+  (make-instance multi-line-strategy
+                 :respace (multi-line-clearing-reindenting-respacer
+                           (make-instance multi-line-fill-column-respacer))))
 (defun multi-line-set-per-major-mode-strategies ()
   "Set language specific strategies."
   (interactive)
@@ -213,7 +217,7 @@ FIND-STRATEGY is a class with the method multi-line-find-next."
    (make-instance multi-line-strategy
                   :respace
                   (multi-line-trailing-comma-respacer
-                   (make-instance multi-line-fill-respacer)))))
+                   (make-instance multi-line-fixed-fill-respacer)))))
 
 (multi-line-set-per-major-mode-strategies)
 
