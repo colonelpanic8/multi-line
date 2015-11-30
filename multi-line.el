@@ -194,6 +194,7 @@ FIND-STRATEGY is a class with the method multi-line-find-next."
   (make-instance multi-line-strategy
                  :respace (multi-line-clearing-reindenting-respacer
                            (make-instance multi-line-fill-column-respacer))))
+
 (defun multi-line-set-per-major-mode-strategies ()
   "Set language specific strategies."
   (interactive)

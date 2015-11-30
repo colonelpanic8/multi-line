@@ -9,6 +9,16 @@ multi-lining and single-lining function invocations and definitions,
 array and map literals and more. It relies on functions that are
 defined on a per major mode basis wherever it can so that it functions
 correctly across many different programming languages.
+
+* Officially Supported Languages
+The following languages are officially supported by multi-line
+- python
+- golang
+- emacs-lisp
+- javascript
+- C/C++
+- Ruby
+It is likely that multi-line will function pretty well in any language using typical brace/parenthesis/comma syntax, provided that the major mode has properly defined ~forward-sexp~ and ~indent-line~. If you find that multi-line works well without modification in your language of choice please file an issue to have it added to the list of officially supported languages.
 * Installation
 
 Install from MELPA with ~M-x package-install multi-line~. See the [[https://github.com/milkypostman/melpa][melpa repository]] for details about how to set up MELPA if you have not already done so.
@@ -18,7 +28,7 @@ Install from MELPA with ~M-x package-install multi-line~. See the [[https://gith
 (require 'multi-line)
 (global-set-key (kbd "C-c d") 'multi-line)
 #+END_SRC
-* Configuration/Language Support
+* Configuration
 multi-line can be configured to behave differently depending on the major mode of the current-buffer. The behavior of multi-line is described with a multi-line-strategy object that has three components: a find-strategy, an enter-strategy and a replace-strategy. The following code snippet defines the respacer that is used in emacs-lisp mode.
 
 #+BEGIN_SRC emacs-lisp
@@ -40,15 +50,7 @@ multi-line can be configured to behave differently depending on the major mode o
 More details about how to define custom respacers will be added here shortly.
 
 * Notes
-** Work In Progress/Language Support
+** Work In Progress
 multi-line is still very much a work in progress. It is likely that there are kinks to iron out, especially in languages that have not yet been tested by the author. With that said, multi-line is designed to be as poly-lingual as possible. Though multi-line relies as much as possible on functions defined by major-mode like forward-sexp, it is likely that many languages will need small peices of additional custom code. Please feel free to file issues requesting support for any language.
-*** Officially Supported Languages
-The following languages are officially supported by multi-line
-- python
-- golang
-- emacs-lisp
-- javascript
-- C/C++
-It is likely that multi-line will function pretty well in any language using typical brace/parenthesis/comma syntax, provided that the major mode has properly defined ~forward-sexp~ and ~indent-line~. If you find that multi-line works well without modification in your language of choice please file an issue to have it added to the list of officially supported languages.
 ** Contextual Behavior
 Multi-line can theoretically be configured to behave in different ways depending on arbitrary contextual factors. At the moment, there is only built-in infrastructure to define behavior on a per major mode basis, but with a bit of additional elisp, other contextual factors could determine multi-lining behavior. Github issues requesting such behavior are welcome.
