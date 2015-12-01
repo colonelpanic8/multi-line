@@ -18,6 +18,8 @@ The following languages are officially supported by multi-line
 - javascript
 - C/C++
 - Ruby
+- Scala
+- Java
 It is likely that multi-line will function pretty well in any language using typical brace/parenthesis/comma syntax, provided that the major mode has properly defined ~forward-sexp~ and ~indent-line~. If you find that multi-line works well without modification in your language of choice please file an issue to have it added to the list of officially supported languages.
 * Installation
 
