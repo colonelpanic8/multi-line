@@ -72,13 +72,12 @@ FIND-STRATEGY is a class with the method multi-line-find-next."
     (let ((markers (multi-line-markers strategy))
           (respacer (if for-single-line (oref strategy :sl-respace)
                       (oref strategy :respace))))
-      (cl-loop for marker being the elements of markers using (index i) do
-               (multi-line-execute-one strategy marker i markers respacer)))))
+      (multi-line-respace respacer markers))))
 
 (defmethod multi-line-execute-one ((strategy multi-line-strategy)
                                    marker i markers respacer)
   (goto-char (marker-position marker))
-  (multi-line-respace respacer i markers))
+  (multi-line-respace-one respacer i markers))
 
 (defclass multi-line-major-mode-strategy-selector ()
   ((default-strategy :initarg :default-strategy :initform

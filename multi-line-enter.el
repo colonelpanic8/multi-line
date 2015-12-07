@@ -36,6 +36,9 @@
    (advance-fn :initarg :advance-fn :initform 'multi-line-lparenthesis-advance)
    (inside-fn :initarg :inside-fn :initform 'multi-line-up-list-back)))
 
+(defclass multi-line-backward-sexp-strategy ()
+  ((continue-regex :initarg :continue-regex )))
+
 (defmethod multi-line-enter ((enter multi-line-forward-sexp-enter-strategy))
   (condition-case nil
       (let (last-point)
