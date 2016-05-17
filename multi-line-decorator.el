@@ -46,7 +46,7 @@
    (decorator :initarg :decorator)))
 
 (defmethod multi-line-respace-one ((decorator multi-line-each-decorator)
-                               index markers)
+                                   index markers)
   (funcall (oref decorator :decorator) (oref decorator :respacer) index markers))
 
 (defclass multi-line-decorator (multi-line-respacer)
