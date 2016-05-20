@@ -90,7 +90,7 @@
 
 (defclass multi-line-fill-column-respacer (multi-line-fill-respacer) nil)
 
-(defmethod multi-line-get-fill-column ((respacer multi-line-fill-column-respacer))
+(defmethod multi-line-get-fill-column ((_respacer multi-line-fill-column-respacer))
   fill-column)
 
 (provide 'multi-line-respace)
