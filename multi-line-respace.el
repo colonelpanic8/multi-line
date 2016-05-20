@@ -62,7 +62,7 @@
 
 (defclass multi-line-fill-respacer (multi-line-respacer)
   ((newline-respacer :initarg :newline-respacer :initform
-                       (make-instance multi-line-always-newline))
+                     (make-instance multi-line-always-newline))
    (default-respacer :initarg :default-respacer :initform
      (make-instance multi-line-never-newline))))
 
