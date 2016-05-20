@@ -73,7 +73,7 @@
         (and (equal index (- marker-length 1)))
         (and (< (+ index 1) marker-length)
              (save-excursion
-               (goto-char (marker-position (nth (+ index 1) markers )))
+               (goto-char (marker-position (nth (+ index 1) markers)))
                (> (current-column) (multi-line-get-fill-column respacer)))))))
 
 (defmethod multi-line-respace-one ((respacer multi-line-fill-respacer) index markers)
