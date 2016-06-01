@@ -30,17 +30,6 @@
 (put 'multi-line-post-decorator 'lisp-indent-function 'defun)
 (put 'multi-line-post-all-decorator 'lisp-indent-function 'defun)
 
-(defmacro multi-line-compose (name &rest funcs)
-  "Build a new function with NAME that is the composition of FUNCS."
-  `(defun ,name (arg)
-     (multi-line-compose-helper ,funcs)))
-
-(defmacro multi-line-compose-helper (funcs)
-  "Builds funcalls of FUNCS applied to the arg."
-  (if (equal (length funcs) 0)
-      (quote arg)
-    `(funcall ,(car funcs) (multi-line-compose-helper ,(cdr funcs)))))
-
 (defclass multi-line-each-decorator (multi-line-respacer)
   ((respacer :initarg :respacer)
    (decorator :initarg :decorator)))

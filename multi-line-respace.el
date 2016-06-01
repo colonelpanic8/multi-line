@@ -23,6 +23,7 @@
 ;;; Code:
 
 (require 'eieio)
+(require 'multi-line-position)
 
 (defclass multi-line-respacer () nil)
 
@@ -46,54 +47,59 @@
                   (looking-at (oref respacer :spacer))))
 
 (defclass multi-line-always-newline (multi-line-respacer)
-  ((always-first :initarg :skip-first :initform nil)
-   (always-last :initarg :skip-last :initform nil)))
+  ())
 
-(defmethod multi-line-should-newline ((respacer multi-line-always-newline)
-                                      index markers)
-  (let ((marker-length (length markers)))
-    (not (or (looking-at "[[:space:]]*\n")
-             (and (equal 0 index) (oref respacer :skip-first))
-             (and (equal index (- marker-length 1)) (oref respacer :skip-last))))))
-
-(defmethod multi-line-respace-one ((respacer multi-line-always-newline) index markers)
-  (when (multi-line-should-newline respacer index markers)
+(defmethod multi-line-respace-one ((_respacer multi-line-always-newline)
+                                   _index _markers)
+  (when (not (looking-at "[[:space:]]*\n"))
     (newline-and-indent)))
 
-(defclass multi-line-fill-respacer (multi-line-respacer)
+(defclass multi-line-newline-predicate-respacer (multi-line-respacer)
   ((newline-respacer :initarg :newline-respacer :initform
                      (make-instance multi-line-always-newline))
    (default-respacer :initarg :default-respacer :initform
-     (make-instance multi-line-never-newline))))
+     (make-instance multi-line-never-newline))
+   (newline-predicate :initarg :newline-predicate)))
 
-(defmethod multi-line-should-newline ((respacer multi-line-fill-respacer)
-                                      index markers)
-  (let ((marker-length (length markers)))
-    ;; Always newline when we are at the first or last marker so that
-    ;; the newline-respacer can decide about whether or not the
-    ;; respace should happen.
-    (or (equal 0 index)
-        (equal index (- marker-length 1))
-        (and (< (+ index 1) marker-length)
-             (save-excursion
-               (goto-char (marker-position (nth (+ index 1) markers)))
-               (> (current-column) (multi-line-get-fill-column respacer)))))))
-
-(defmethod multi-line-respace-one ((respacer multi-line-fill-respacer) index markers)
+(defmethod multi-line-respace-one ((respacer multi-line-newline-predicate-respacer)
+                                   index markers)
   (multi-line-respace-one
    (if (multi-line-should-newline respacer index markers)
        (oref respacer :newline-respacer)
      (oref respacer :default-respacer)) index markers))
 
-(defclass multi-line-fixed-fill-respacer (multi-line-fill-respacer)
+(defmethod multi-line-should-newline ((respacer multi-line-newline-predicate-respacer)
+                                      index markers)
+  (funcall (oref respacer :newline-predicate) index markers))
+
+(defclass multi-line-fill-decider nil
+  ((position :initarg :position
+             :initform (make-instance multi-line-position-finder))))
+
+(defmethod multi-line-should-newline ((respacer multi-line-fill-decider)
+                                      index markers)
+  (let ((marker-length (length markers)))
+    (and (< (+ index 1) marker-length)
+             (save-excursion
+               (goto-char (marker-position (nth (+ index 1) markers)))
+               (> (current-column) (multi-line-get-fill-column respacer))))))
+
+(defmethod multi-line-markers-will-require-newline ((decider multi-line-fill-decider)
+                                                    markers)
+  (save-excursion
+    (goto-char (marker-position (nth markers (- (length markers) 1))))
+    (> (current-column) )
+    ))
+
+(defclass multi-line-fixed-fill-decider (multi-line-fill-decider)
   ((newline-at :initarg :newline-at :initform 80)))
 
-(defmethod multi-line-get-fill-column ((respacer multi-line-fixed-fill-respacer))
+(defmethod multi-line-get-fill-column ((respacer multi-line-fixed-fill-decider))
   (oref respacer :newline-at))
 
-(defclass multi-line-fill-column-respacer (multi-line-fill-respacer) nil)
+(defclass multi-line-fill-column-decider (multi-line-fill-decider) nil)
 
-(defmethod multi-line-get-fill-column ((_respacer multi-line-fill-column-respacer))
+(defmethod multi-line-get-fill-column ((_respacer multi-line-fill-column-decider))
   fill-column)
 
 (provide 'multi-line-respace)
