@@ -1,0 +1,18 @@
+* TODO Account for characters AFTER last respace position when respacing to a fill column
+  :LOGBOOK:
+  - State "TODO"       from              [2016-08-22 Mon 15:50]
+  :END:
+* TODO Handle forced grouping of grouped multi-line targets as with keywords in lisp
+  :LOGBOOK:
+  - State "TODO"       from              [2016-08-22 Mon 15:51]
+  :END:
+#+BEGIN_SRC emacs-lisp
+(multi-line-forward-sexp-find-strategy
+ :split-regex "[[:space:]\n]+"
+ :done-regex "[[:space:]]*)}]"
+ :split-advance-fn 'multi-line-lisp-advance-fn)
+#+END_SRC
+* TODO Cycle through different respace strategies with multiple multi-line invocations
+  :LOGBOOK:
+  - State "TODO"       from              [2016-08-22 Mon 15:52]
+  :END:
