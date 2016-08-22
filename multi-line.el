@@ -6,7 +6,7 @@
 ;; Keywords: multi line length whitespace programming
 ;; URL: https://github.com/IvanMalison/multi-line
 ;; Version: 0.0.0
-;; Package-Requires: ((emacs "24") (s "1.9.0"))
+;; Package-Requires: ((emacs "24") (s "1.9.0") (cl-lib "0.5"))
 
 ;; This program is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
@@ -32,6 +32,7 @@
 
 ;;; Code:
 
+(require 'cl-lib)
 (require 'eieio)
 (require 'multi-line-decorator)
 (require 'multi-line-enter)

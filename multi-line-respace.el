@@ -23,6 +23,7 @@
 ;;; Code:
 
 (require 'eieio)
+(require 'cl-lib)
 
 (defclass multi-line-respacer () nil)
 
