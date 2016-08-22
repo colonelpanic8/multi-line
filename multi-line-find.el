@@ -37,7 +37,8 @@
    ((looking-at (oref strategy :split-regex)) :candidate)
    (t nil)))
 
-(defmethod multi-line-find-next ((strategy multi-line-forward-sexp-find-strategy))
+(defmethod multi-line-find-next ((strategy multi-line-forward-sexp-find-strategy)
+                                 &optional context)
   (let (last last-point this-point)
     (setq this-point (point))
     (condition-case nil

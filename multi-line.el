@@ -40,18 +40,6 @@
 (require 'multi-line-respace)
 (require 'multi-line-shared)
 
-(defun multi-line-get-markers (enter-strategy find-strategy)
-  "Get the markers for multi-line candidates for the statement at point.
-
-ENTER-STRATEGY is a class with the method multi-line-enter, and
-FIND-STRATEGY is a class with the method multi-line-find-next."
-  (multi-line-enter enter-strategy)
-  (let ((markers (list (point-marker))))
-    (nconc markers
-          (cl-loop until (equal (multi-line-find-next find-strategy) :done)
-                   collect (point-marker)))
-    (nconc markers (list (point-marker)))))
-
 (defclass multi-line-strategy ()
   ((enter :initarg :enter :initform
           (make-instance multi-line-up-list-enter-strategy))
@@ -69,6 +57,17 @@ FIND-STRATEGY is a class with the method multi-line-find-next."
 
 (defmethod multi-line-execute ((strategy multi-line-strategy)
                                for-single-line)
+(defmethod multi-line-markers ((strategy multi-line-strategy) &optional context)
+  "Get the markers for multi-line candidates for the statement at point."
+  (let ((enter-strategy (oref strategy :enter))
+        (find-strategy (oref strategy :find)))
+    (multi-line-enter enter-strategy context)
+    ;; TODO: This logic should probably be part of the find-strategy
+    (nconc (list (point-marker))        ;start marker
+           (cl-loop until (equal (multi-line-find-next find-strategy context) :done)
+                    collect (point-marker))
+           (list (point-marker))        ;end marker
+           )))
   (save-excursion
     (let ((markers (multi-line-markers strategy))
           (respacer (if for-single-line (oref strategy :sl-respace)

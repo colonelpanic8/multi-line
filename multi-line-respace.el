@@ -25,9 +25,12 @@
 (require 'eieio)
 (require 'cl-lib)
 
+(require 'multi-line-cycle)
+
 (defclass multi-line-respacer () nil)
 
-(defmethod multi-line-respace ((respacer multi-line-respacer) markers)
+(defmethod multi-line-respace ((respacer multi-line-respacer) markers
+                               &optional context)
   (cl-loop for marker being the elements of markers using (index i) do
            (goto-char (marker-position marker))
            (multi-line-respace-one respacer i markers)))
