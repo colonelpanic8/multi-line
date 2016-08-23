@@ -57,6 +57,14 @@
                        (last-marker (oref cycler last-cycle-marker)))
                   (equal current-marker last-marker))
                t))
+                   ;; Because the respace phase occurs AFTER markers
+                   ;; are obtained, but before the end of the
+                   ;; save-excursion in the execute call, and the
+                   ;; function to obtain the markers moves the cursor
+                   ;; to a final position in a deterministic way, this
+                   ;; condition will actually allow the user to move
+                   ;; their cursor within the multi-space body and
+                   ;; still get cycling behavior.
       (multi-line-increment-cycle-index cycler)
     (multi-line-cycler-reset cycler))
   (multi-line-current-respacer cycler))
