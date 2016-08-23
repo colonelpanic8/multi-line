@@ -33,7 +33,8 @@
    (last-cycle-marker :initform nil)
    (cycle-index :initform 0)
    (command-at-last-cycle :initform nil)
-   (check-markers :initform t)))
+   (check-markers :initform t :initarg check-markers)
+   (check-last-command :initform nil :initarg check-last-command)))
 
 (defmethod multi-line-respace ((cycler multi-line-cycle-respacer) markers
                                &optional context)
@@ -51,12 +52,11 @@
 
 (defmethod multi-line-cycle ((cycler multi-line-cycle-respacer))
   (if (and (eq multi-line-last-cycler cycler)
-             (equal (oref cycler command-at-last-cycle) this-command)
-             (if (oref cycler check-markers)
-                 (let ((current-marker (point-marker))
+           (or (not (oref cycler check-last-command))
+               (equal (oref cycler command-at-last-cycle) last-command))
+           (or (not (oref cycler check-markers))
+               (let ((current-marker (point-marker))
                        (last-marker (oref cycler last-cycle-marker)))
-                  (equal current-marker last-marker))
-               t))
                    ;; Because the respace phase occurs AFTER markers
                    ;; are obtained, but before the end of the
                    ;; save-excursion in the execute call, and the
@@ -65,6 +65,7 @@
                    ;; condition will actually allow the user to move
                    ;; their cursor within the multi-space body and
                    ;; still get cycling behavior.
+                  (equal current-marker last-marker))))
       (multi-line-increment-cycle-index cycler)
     (multi-line-cycler-reset cycler))
   (multi-line-current-respacer cycler))
