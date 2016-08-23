@@ -12,8 +12,9 @@
  :done-regex "[[:space:]]*)}]"
  :split-advance-fn 'multi-line-lisp-advance-fn)
 #+END_SRC
-* TODO Cycle through different respace strategies with multiple multi-line invocations
+* DONE Cycle through different respace strategies with multiple multi-line invocations
   :LOGBOOK:
+  - State "DONE"       from "TODO"       [2016-08-22 Mon 17:12]
   - State "TODO"       from              [2016-08-22 Mon 15:52]
   :END:
 * TODO Handle applying multi-line strategies in derived modes
