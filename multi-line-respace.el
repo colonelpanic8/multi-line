@@ -22,8 +22,8 @@
 
 ;;; Code:
 
-(require 'eieio)
 (require 'cl-lib)
+(require 'eieio)
 
 (require 'multi-line-cycle)
 
