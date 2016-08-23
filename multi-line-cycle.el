@@ -55,7 +55,6 @@
              (if (oref cycler check-markers)
                  (let ((current-marker (point-marker))
                        (last-marker (oref cycler last-cycle-marker)))
-                   (message "cur %s, last %s" current-marker last-marker)
                   (equal current-marker last-marker))
                t))
       (multi-line-increment-cycle-index cycler)
