@@ -120,7 +120,8 @@
 
 (defvar multi-line-mode-to-hook nil)
 
-(defmacro multi-line-defhook (mode-name strategy-form &optional use-global-enable)
+(defmacro multi-line-defhook
+    (mode-name strategy-form &optional use-global-enable)
   (let* ((mode-string (symbol-name mode-name))
          (base-string (concat multi-line-defhook-prefix (symbol-name mode-name)))
          (variable-name (intern (concat base-string "-strategy")))
@@ -140,8 +141,7 @@
 (put 'multi-line-defhook 'lisp-indent-function 1)
 
 (defvar multi-line-lisp-respacer
-  (multi-line-default-respacers multi-line-skip-fill-respacer
-                                (multi-line-always-newline)))
+  (multi-line-default-respacers multi-line-skip-fill-respacer))
 
 (defvar multi-line-lisp-strategy
   (multi-line-strategy
