@@ -69,13 +69,13 @@ were generated for the statement."
 
 (defmacro multi-line-predicate-or (&rest predicates)
   `(lambda (&rest args)
-       (or ,@(cl-loop for predicate in predicates
-                      collect `(apply ,predicate args)))))
+     (or ,@(cl-loop for predicate in predicates
+                    collect `(apply ,predicate args)))))
 
 (defmacro multi-line-predicate-and (&rest predicates)
   `(lambda (&rest args)
-       (and ,@(cl-loop for predicate in predicates
-                      collect (quote (apply predicate args))))))
+     (and ,@(cl-loop for predicate in predicates
+                     collect (quote (apply predicate args))))))
 
 (defun multi-line-last-predicate (index markers)
   (equal index (- (length markers) 1)))
