@@ -16,3 +16,9 @@
   :LOGBOOK:
   - State "TODO"       from              [2016-08-22 Mon 15:52]
   :END:
+* TODO Handle applying multi-line strategies in derived modes
+  :LOGBOOK:
+  - State "TODO"       from              [2016-08-22 Mon 16:03]
+  :END:
+Should multi-line-strategy just be made buffer local?
+Seems like that would make things much simpler
