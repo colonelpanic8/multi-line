@@ -34,17 +34,18 @@
     (backward-char)
     (kill-region start (point))))
 
-(defun multi-line-add-trailing-comma (index markers)
-  "Add a trailing comma when at the last marker.
-
-INDEX is the index that will be used to determine whether or not
-the action should be taken.  MARKERS is the list of markers that
-were generated for the statement."
-  (when (equal index (- (length markers) 1))
-    (re-search-backward "[^[:space:]\n]")
-    (when (not (looking-at ","))
-      (forward-char)
-      (insert ","))))
+(defun multi-line-add-remove-or-leave-final-comma ()
+  (save-excursion
+    (if (looking-at ",?[[:space:]]*\n")
+        (when (not (or (looking-at ",")
+                       (save-excursion
+                         (re-search-backward "[^[:space:]\n]")
+                         (looking-at ","))))
+          (insert ","))
+      (when (or (looking-at ",")
+                (progn (re-search-backward "[^[:space:]\n]")
+                       (looking-at ",")))
+        (delete-char 1)))))
 
 (defun multi-line-lparenthesis-advance ()
   "Advance to the beginning of a statement that can be multi-lined."
