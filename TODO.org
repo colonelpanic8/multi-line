@@ -58,3 +58,39 @@ Instead of:
 (my-function-name "a long ass string" "more stuff"
                   (afdasfdsa afdsafdsa afdsafdsa afdsafa afdfdsa "more crap" "crap"))
 #+END_SRC
+* TODO Fill column does not seem to work properly
+  :PROPERTIES:
+  :CREATED:  [2015-11-27 Fri 11:58]
+  :END:
+  :LOGBOOK:
+  - State "TODO"       from              [2015-11-27 Fri 11:58]
+  :END:
+...in situations where the next separator mark is not on the same line as the multi-lining line because it looks at the column number position at the separator (usually ,)
+* TODO Fill respacer does not consider characters from things that follow the end of the respaced definition
+  :PROPERTIES:
+  :CREATED:  [2015-11-23 Mon 17:59]
+  :END:
+  :LOGBOOK:
+  - Note taken on [2015-11-30 Mon 20:24] \\
+	Here is an example:
+
+	#+BEGIN_SRC go
+	   func (a *Account) paramsToStateChange(newState ordert.AccountState) *db.AccountStateChange {
+	   }
+	#+END_SRC
+  - State "TODO"       from              [2015-11-23 Mon 17:59]
+  :END:
+* TODO Being inside of quotes can mess things up in python mode
+  :PROPERTIES:
+  :CREATED:  [2015-11-23 Mon 13:03]
+  :END:
+  :LOGBOOK:
+  - State "TODO"       from              [2015-11-23 Mon 13:03]
+  :END:
+* TODO ruby-map literals
+  :PROPERTIES:
+  :CREATED:  [2015-11-29 Sun 23:59]
+  :END:
+  :LOGBOOK:
+  - State "TODO"       from              [2015-11-29 Sun 23:59]
+  :END:
