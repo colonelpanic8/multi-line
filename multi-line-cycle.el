@@ -42,7 +42,7 @@
          (respacer-index (plist-get context :respacer-index))
          (respacer
           (or (plist-get (oref cycler named-respacers)
-                                 respacer-name)
+                         respacer-name)
               (when respacer-index
                 (nth respacer-index (oref cycler respacers))))))
     (if respacer
@@ -56,16 +56,16 @@
                (equal (oref cycler command-at-last-cycle) last-command))
            (or (not (oref cycler check-markers))
                (let ((current-marker (point-marker))
-                       (last-marker (oref cycler last-cycle-marker)))
-                   ;; Because the respace phase occurs AFTER markers
-                   ;; are obtained, but before the end of the
-                   ;; save-excursion in the execute call, and the
-                   ;; function to obtain the markers moves the cursor
-                   ;; to a final position in a deterministic way, this
-                   ;; condition will actually allow the user to move
-                   ;; their cursor within the multi-space body and
-                   ;; still get cycling behavior.
-                  (equal current-marker last-marker))))
+                     (last-marker (oref cycler last-cycle-marker)))
+                 ;; Because the respace phase occurs AFTER markers
+                 ;; are obtained, but before the end of the
+                 ;; save-excursion in the execute call, and the
+                 ;; function to obtain the markers moves the cursor
+                 ;; to a final position in a deterministic way, this
+                 ;; condition will actually allow the user to move
+                 ;; their cursor within the multi-space body and
+                 ;; still get cycling behavior.
+                 (equal current-marker last-marker))))
       (multi-line-increment-cycle-index cycler)
     (multi-line-cycler-reset cycler))
   (multi-line-current-respacer cycler))
@@ -91,11 +91,11 @@
          (respacers
           (cl-loop for respacer-spec in respacers-list
                    collect (pcase respacer-spec
-                     (`(,name . ,respacer)
-                      (setq named-respacers
-                            (plist-put named-respacers name respacer))
-                      respacer)
-                     (_ respacer-spec)))))
+                             (`(,name . ,respacer)
+                              (setq named-respacers
+                                    (plist-put named-respacers name respacer))
+                              respacer)
+                             (_ respacer-spec)))))
     (multi-line-cycle-respacer :respacers respacers
                                :named-respacers named-respacers)))
 
