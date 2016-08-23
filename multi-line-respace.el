@@ -73,7 +73,7 @@
 (defmethod multi-line-should-newline ((respacer multi-line-fill-respacer)
                                       index markers)
   (let ((marker-length (length markers)))
-    ;; Always newline when we are at the first or last marker so that
+    ;; XXX: Always newline when we are at the first or last marker so that
     ;; the newline-respacer can decide about whether or not the
     ;; respace should happen.
     (or (equal 0 index)
