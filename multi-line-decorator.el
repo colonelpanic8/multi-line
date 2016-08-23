@@ -23,6 +23,7 @@
 ;;; Code:
 
 (require 'eieio)
+
 (require 'multi-line-respace)
 (require 'multi-line-shared)
 
@@ -53,7 +54,8 @@
   ((respacer :initarg :respacer)
    (decorator :initarg :decorator)))
 
-(defmethod multi-line-respace ((decorator multi-line-decorator) markers)
+(defmethod multi-line-respace ((decorator multi-line-decorator) markers
+                               &optional context)
   (funcall
    (oref decorator :decorator) (oref decorator :respacer) markers))
 
