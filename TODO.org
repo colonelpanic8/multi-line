@@ -23,3 +23,38 @@
   :END:
 Should multi-line-strategy just be made buffer local?
 Seems like that would make things much simpler
+* TODO "Aggressive" fill multi-lining
+  :LOGBOOK:
+  - State "TODO"       from              [2016-08-22 Mon 20:56]
+  :END:
+...Where a new-line is inserted before not doing so would exceed the fill column to avoid situations like where multi-lining becomes very ineffective
+#+BEGIN_SRC emacs-lisp
+(org-projectile:update-project-to-org-filepath-fdsafd-fds "multi-line"
+                                                          (imalison:join-paths "~"))
+#+END_SRC
+
+The "aggresive" version would looke like
+
+#+BEGIN_SRC emacs-lisp
+(org-projectile:update-project-to-org-filepath-fdsafd-fds
+ "multi-line" (imalison:join-paths "~"))
+#+END_SRC
+* TODO Recursive multi-lining
+  :LOGBOOK:
+  - State "TODO"       from              [2016-08-22 Mon 21:02]
+  :END:
+Ex:
+#+BEGIN_SRC emacs-lisp
+(my-function-name "a long ass string" "more stuff" (afdasfdsa afdsafdsa afdsafdsa afdsafa afdfdsa "more crap" "crap"))
+#+END_SRC
+To:
+#+BEGIN_SRC emacs-lisp
+(my-function-name "a long ass string" "more stuff"
+                  (afdasfdsa afdsafdsa afdsafdsa afdsafa afdfdsa
+                             "more crap" "crap"))
+#+END_SRC
+Instead of:
+#+BEGIN_SRC emacs-lisp
+(my-function-name "a long ass string" "more stuff"
+                  (afdasfdsa afdsafdsa afdsafdsa afdsafa afdfdsa "more crap" "crap"))
+#+END_SRC
