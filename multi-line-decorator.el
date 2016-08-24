@@ -109,5 +109,34 @@ by the executor."
                     'multi-line-reindenting-respacer
                     'multi-line-space-clearing-respacer)
 
+(defclass multi-line-space-restoring-respacer ()
+  ((respacer :initarg :respacer)))
+
+(defmethod multi-line-respace-one ((respacer multi-line-space-restoring-respacer)
+                                   index candidates)
+  (cl-destructuring-bind (startm . endm) (multi-line-space-markers)
+    (let* ((start (marker-position startm))
+           (end (marker-position endm))
+           (spanning-start (progn
+                             (goto-char (- start 1))
+                             (point-marker)))
+           (spanning-end (progn
+                           (goto-char (+ end 1))
+                           (point-marker)))
+           (space-to-restore (buffer-substring start end))))
+    (delete-region start end)
+    (let ((spanning-string (buffer-substring (marker-position spanning-start)
+                                             (marker-position spanning-end))))
+      (multi-line-respace-one (oref respacer respacer) index candidates)
+      (when (equal (buffer-substring (marker-position spanning-start)
+                                     (marker-position spanning-end))
+                   spanning-string)
+        (goto-char (marker-position start))
+        (insert space-to-restore)))))
+
+(defun multi-line-restoring-reindenting-respacer (respacer)
+  (multi-line-reindenting-respacer
+   (multi-line-space-restoring-respacer :respacer respacer)))
+
 (provide 'multi-line-decorator)
 ;;; multi-line-decorator.el ends here
