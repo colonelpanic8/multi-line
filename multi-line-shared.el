@@ -36,7 +36,7 @@
 
 SPACE-MATCHES-STRING is as a string containing concatenated
 character classes that will be used to find whitespace."
-  (let (space-excludes-string (format "[^%s]" space-matches-string))
+  (let ((space-excludes-string (format "[^%s]" space-matches-string)))
     (re-search-backward space-excludes-string)
     (forward-char)
     (let* ((start (point-marker))

@@ -56,7 +56,7 @@
 (defmethod multi-line-find ((strategy multi-line-forward-sexp-find-strategy)
                             &optional context)
   (nconc (list (point-marker))
-         (cl-loop until (equal (multi-line-find-next find-strategy context) :done)
+         (cl-loop until (equal (multi-line-find-next strategy context) :done)
                   collect (point-marker))
          (list (point-marker))))
 

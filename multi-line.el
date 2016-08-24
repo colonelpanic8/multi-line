@@ -94,7 +94,7 @@
   (when (or (eq context t) (equal context 'single-line))
     (setq context (plist-put nil :respacer-name :single-line)))
   (save-excursion
-    (let ((markers (multi-line-markers strategy)))
+    (let ((markers (multi-line-candidates strategy)))
       (multi-line-respace (oref strategy :respace) markers context))))
 
 (defmethod multi-line-execute-one ((strategy multi-line-strategy)
