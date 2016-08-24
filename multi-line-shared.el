@@ -25,9 +25,11 @@
 (require 'cl-lib)
 (require 's)
 
-(defun multi-line-clear-whitespace-at-point (&optional whitespace-string)
+(defun multi-line-clear-whitespace-at-point ()
+  "Clear the whitespace at point."
+  (interactive)
   (cl-destructuring-bind (start . end)
-      (multi-line-space-markers whitespace-string)
+      (multi-line-space-markers)
     (delete-region (marker-position start) (marker-position end))))
 
 (cl-defun multi-line-space-markers
