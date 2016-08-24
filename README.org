@@ -22,39 +22,71 @@ The following languages are officially supported by multi-line
 - Scala
 - Java
 
-It is likely that multi-line will function pretty well in any language using typical brace/parenthesis/comma syntax, provided that the major mode has properly defined ~forward-sexp~ and ~indent-line~. If you find that multi-line works well without modification in your language of choice please file an issue to have it added to the list of officially supported languages.
+It is likely that multi-line will function pretty well in any language using
+typical brace/parenthesis/comma syntax, provided that the major mode has
+properly defined ~forward-sexp~ and ~indent-line~. If you find that multi-line
+works well without modification in your language of choice please file an issue
+or submit a pull request to have it added to the list of officially supported
+languages.
 * Installation
-
-Install from MELPA with ~M-x package-install multi-line~. See the [[https://github.com/milkypostman/melpa][melpa repository]] for details about how to set up MELPA if you have not already done so.
+Install from MELPA with ~M-x package-install multi-line~. See the [[https://github.com/milkypostman/melpa][melpa
+repository]] for details about how to set up MELPA if you have not already done
+so.
 * Setup
-
 #+BEGIN_SRC emacs-lisp
 (require 'multi-line)
 (global-set-key (kbd "C-c d") 'multi-line)
 #+END_SRC
 * Configuration
-multi-line can be configured to behave differently depending on the major mode of the current-buffer. The behavior of multi-line is described with a multi-line-strategy object that has three components: a find-strategy, an enter-strategy and a replace-strategy. The following code snippet defines the respacer that is used in emacs-lisp mode.
+multi-line can be configured to behave differently depending on the major mode
+of the current-buffer. The behavior of multi-line is described with a
+multi-line-strategy object that has three components: a find-strategy, an
+enter-strategy and a replace-strategy. The ~multi-line-defhook~ macro can be
+used to set a major mode specific multi-lining strategy. The strategy defined
+with the defhook will become active in any buffers with the specified mode.
+
+In the following example we set the default multi-lining behavior for the
+clojure programming language.
 
 #+BEGIN_SRC emacs-lisp
-  (multi-line-set-strategy
-   multi-line-master-strategy 'emacs-lisp-mode
-   (make-instance multi-line-strategy
-                  :find
-                  (make-instance
-                   multi-line-forward-sexp-find-strategy
-                   :split-regex "[[:space:]\n]+"
-                   :done-regex "[[:space:]]*)"
-                   :split-advance-fn 'multi-line-lisp-advance-fn)
-                  :enter
-                  (make-instance
-                   multi-line-up-list-enter-strategy)
-                  :respace multi-line-skip-fill-respacer))
+(multi-line-defhook clojure
+  (multi-line-strategy
+   :find (multi-line-forward-sexp-find-strategy
+          :split-regex "[[:space:]\n]+"
+          :done-regex "[[:space:]]*)]}"
+          :split-advance-fn 'multi-line-lisp-advance-fn)
+   :enter (multi-line-up-list-enter-strategy)
+   :respace multi-line-lisp-respacer))
 #+END_SRC
 
-More details about how to define custom respacers will be added here shortly.
+This expands to
 
-* Notes
-** Work In Progress
-multi-line is still very much a work in progress. It is likely that there are kinks to iron out, especially in languages that have not yet been tested by the author. With that said, multi-line is designed to be as poly-lingual as possible. Though multi-line relies as much as possible on functions defined by major-mode like forward-sexp, it is likely that many languages will need small peices of additional custom code. Please feel free to file issues requesting support for any language.
-** Contextual Behavior
-Multi-line can theoretically be configured to behave in different ways depending on arbitrary contextual factors. At the moment, there is only built-in infrastructure to define behavior on a per major mode basis, but with a bit of additional elisp, other contextual factors could determine multi-lining behavior. Github issues requesting such behavior are welcome.
+#+BEGIN_SRC emacs-lisp
+(eval-and-compile
+  (defvar multi-line-clojure-strategy)
+  (setq multi-line-clojure-strategy
+        (multi-line-strategy :find
+                             (multi-line-forward-sexp-find-strategy :split-regex "[[:space:]
+]+" :done-regex "[[:space:]]*)]}" :split-advance-fn 'multi-line-lisp-advance-fn)
+                             :enter
+                             (multi-line-up-list-enter-strategy)
+                             :respace multi-line-lisp-respacer))
+  (defun multi-line-clojure-mode-hook nil
+    (setq-local multi-line-current-strategy multi-line-clojure-strategy))
+  (add-hook 'clojure-mode-hook 'multi-line-clojure-mode-hook t))
+#+END_SRC
+
+Users will most often want to configure the respacing portion of the multi-line
+strategy. If you prefer to always add a newline at every available split point
+you might set up the default multi-line strategy as follows:
+
+#+BEGIN_SRC emacs-lisp
+(setq-default multi-line-current-strategy
+              (multi-line-strategy
+               :respace (multi-line-default-respacers
+                         (multi-line-always-newline))))
+#+END_SRC
+** Built-in Mode Specific Behavior
+multi-line has some built in mode specific behavior that is enabled by default.
+The interactive function ~multi-line-disable-mode-hooks~ disables this mode
+specific behavior.
