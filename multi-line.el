@@ -56,7 +56,7 @@
    (append respacers (list (cons :single-line single-line-respacer)))))
 
 (defun multi-line-default-respacers (&rest respacers)
-  "Add a single-line strategy to RESPACERS and make a cycling respacer strategy."
+  "Add a single-line strategy to RESPACERS and make a cycling respace strategy."
   (multi-line-respacers-with-single-line respacers))
 
 (defvar multi-line-skip-fill-respacer
@@ -82,8 +82,9 @@
    (respace :initarg :respace :initform (progn
                                           multi-line-default-respacer))))
 
-(defmethod multi-line-markers ((strategy multi-line-strategy) &optional context)
-  "Get the markers for multi-line candidates for the statement at point."
+(defmethod multi-line-candidates ((strategy multi-line-strategy)
+                                  &optional context)
+  "Get the multi-line candidates at point."
   (let ((enter-strategy (oref strategy :enter))
         (find-strategy (oref strategy :find)))
     (multi-line-enter enter-strategy context)
@@ -118,7 +119,7 @@
 (defmacro multi-line-defhook
     (mode-name strategy-form &optional use-global-enable)
   (let* ((mode-string (symbol-name mode-name))
-         (base-string (concat multi-line-defhook-prefix (symbol-name mode-name)))
+         (base-string (concat multi-line-defhook-prefix mode-string))
          (variable-name (intern (concat base-string "-strategy")))
          (hook-name (intern (concat base-string "-mode-hook")))
          (mode-hook-name (intern (concat mode-string "-mode-hook"))))
