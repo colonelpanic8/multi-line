@@ -102,7 +102,7 @@
                                                              next-marker)))
                    (let ((inhibit-point-motion-hooks t))
                      (end-of-line)))
-                  ((< next-index final-index)
+                  ((<= next-index final-index)
                    ;; We look at the next index because if IT exceeds the
                    ;; fill-column, we know we need to add a newline now.
                    (goto-char (multi-line-candidate-position next-candidate))))

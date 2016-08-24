@@ -52,7 +52,8 @@
 (cl-defun multi-line-respacers-with-single-line
     (respacers
      &optional (single-line-respacer multi-line-default-single-line-respacer))
-  (multi-line-build-from-respacers-list (append respacers (list (cons :single-line single-line-respacer)))))
+  (multi-line-build-from-respacers-list
+   (append respacers (list (cons :single-line single-line-respacer)))))
 
 (defun multi-line-default-respacers (&rest respacers)
   "Add a single-line strategy to RESPACERS and make a cycling respace strategy."
@@ -113,7 +114,7 @@
 (defvar multi-line-mode-to-hook nil)
 
 (defmacro multi-line-defhook
-    (mode-name strategy-form &optional use-global-enable)
+    (mode-name strategy-form &optional use-global-enable other cray)
   (let* ((mode-string (symbol-name mode-name))
          (base-string (concat multi-line-defhook-prefix mode-string))
          (variable-name (intern (concat base-string "-strategy")))
