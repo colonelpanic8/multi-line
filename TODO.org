@@ -1,5 +1,6 @@
-* TODO Account for characters AFTER last respace position when respacing to a fill column
+* DONE Account for characters AFTER last respace position when respacing to a fill column
   :LOGBOOK:
+  - State "DONE"       from "TODO"       [2016-08-24 Wed 16:24]
   - State "TODO"       from              [2016-08-22 Mon 15:50]
   :END:
 * TODO Handle forced grouping of grouped multi-line targets as with keywords in lisp
@@ -59,25 +60,27 @@ Instead of:
 (my-function-name "a long ass string" "more stuff"
                   (afdasfdsa afdsafdsa afdsafdsa afdsafa afdfdsa "more crap" "crap"))
 #+END_SRC
-* TODO Fill column does not seem to work properly
+* DONE Fill column does not seem to work properly
   :PROPERTIES:
   :CREATED:  [2015-11-27 Fri 11:58]
   :END:
   :LOGBOOK:
+  - State "DONE"       from "TODO"       [2016-08-24 Wed 16:23]
   - State "TODO"       from              [2015-11-27 Fri 11:58]
   :END:
 ...in situations where the next separator mark is not on the same line as the multi-lining line because it looks at the column number position at the separator (usually ,)
-* TODO Fill respacer does not consider characters from things that follow the end of the respaced definition
+* DONE Fill respacer does not consider characters from things that follow the end of the respaced definition
   :PROPERTIES:
   :CREATED:  [2015-11-23 Mon 17:59]
   :END:
   :LOGBOOK:
+  - State "DONE"       from "TODO"       [2016-08-24 Wed 16:24]
   - Note taken on [2015-11-30 Mon 20:24] \\
 	Here is an example:
 
 	#+BEGIN_SRC go
-	   func (a *Account) paramsToStateChange(newState ordert.AccountState) *db.AccountStateChange {
-	   }
+func (a *Account) paramsToStateChange(newState ordert.AccountState) *db.AccountStateChange {
+}
 	#+END_SRC
   - State "TODO"       from              [2015-11-23 Mon 17:59]
   :END:
