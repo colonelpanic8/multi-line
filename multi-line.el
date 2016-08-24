@@ -6,7 +6,7 @@
 ;; Keywords: multi line length whitespace programming
 ;; URL: https://github.com/IvanMalison/multi-line
 ;; Version: 0.0.0
-;; Package-Requires: ((emacs "24") (s "1.9.0") (cl-lib "0.5"))
+;; Package-Requires: ((emacs "24") (s "1.9.0") (cl-lib "0.5") (dash "2.12.0"))
 
 ;; This program is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
@@ -43,33 +43,34 @@
 (require 'multi-line-shared)
 
 (defvar multi-line-default-single-line-respacer
-  (multi-line-clearing-reindenting-respacer (multi-line-never-newline)))
+  (multi-line-clearing-reindenting-respacer
+   (multi-line-never-newline)))
 
 (defvar multi-line-skip-first-and-last-respacer
-  (make-instance multi-line-always-newline
-                 :skip-first t :skip-last t))
+  (multi-line-removing-respacer :respacer (multi-line-always-newline)))
 
 (cl-defun multi-line-respacers-with-single-line
     (respacers
      &optional (single-line-respacer multi-line-default-single-line-respacer))
-  (multi-line-build-from-respacers-list
-   (append respacers (list (cons :single-line single-line-respacer)))))
+  (multi-line-build-from-respacers-list (append respacers (list (cons :single-line single-line-respacer)))))
 
 (defun multi-line-default-respacers (&rest respacers)
   "Add a single-line strategy to RESPACERS and make a cycling respace strategy."
   (multi-line-respacers-with-single-line respacers))
 
 (defvar multi-line-skip-fill-respacer
-  (multi-line-clearing-reindenting-respacer
-   (multi-line-fill-column-respacer
-    :newline-respacer multi-line-skip-first-and-last-respacer)))
+  (multi-line-fill-column-respacer
+   :first-index 1 :final-index -3))
 
 (defvar multi-line-default-respacer-list
   (mapcar 'multi-line-clearing-reindenting-respacer
-          (list (multi-line-fill-column-respacer)
-                (multi-line-always-newline)
-                (multi-line-fill-column-respacer
-                 :newline-respacer multi-line-skip-first-and-last-respacer))))
+          (let ((always-newline (multi-line-always-newline)))
+            (list (multi-line-selecting-respacer
+                   :indices-to-respacer (list (cons (list 0 -1) always-newline))
+                   :default (multi-line-fill-column-respacer))
+                  always-newline
+                  (multi-line-fill-column-respacer
+                   :first-index 1 :final-index -2)))))
 
 (defvar multi-line-default-respacer
   (multi-line-respacers-with-single-line multi-line-default-respacer-list))
@@ -94,13 +95,8 @@
   (when (or (eq context t) (equal context 'single-line))
     (setq context (plist-put nil :respacer-name :single-line)))
   (save-excursion
-    (let ((markers (multi-line-candidates strategy)))
-      (multi-line-respace (oref strategy :respace) markers context))))
-
-(defmethod multi-line-execute-one ((strategy multi-line-strategy)
-                                   marker i markers respacer)
-  (goto-char (marker-position marker))
-  (multi-line-respace-one respacer i markers))
+    (let ((candidates (multi-line-candidates strategy)))
+      (multi-line-respace (oref strategy :respace) candidates context))))
 
 (defvar-local multi-line-current-strategy
   (make-instance multi-line-strategy)
@@ -137,7 +133,8 @@
 (put 'multi-line-defhook 'lisp-indent-function 1)
 
 (defvar multi-line-lisp-respacer
-  (multi-line-default-respacers multi-line-skip-fill-respacer))
+  (multi-line-default-respacers (multi-line-clearing-reindenting-respacer
+                                 multi-line-skip-fill-respacer)))
 
 (defvar multi-line-lisp-strategy
   (multi-line-strategy
@@ -148,9 +145,18 @@
    :enter (multi-line-up-list-enter-strategy)
    :respace multi-line-lisp-respacer) t)
 
-(multi-line-defhook lisp multi-line-lisp-strategy t)
+(defvar multi-line-add-trailing-comma-strategy
+  (multi-line-strategy
+   :respace (multi-line-respacers-with-single-line
+             (mapcar 'multi-line-trailing-comma-respacer
+                     multi-line-default-respacer-list)
+             (multi-line-trailing-comma-respacer
+              multi-line-default-single-line-respacer))))
 
+(multi-line-defhook lisp multi-line-lisp-strategy t)
 (multi-line-defhook emacs-lisp multi-line-lisp-strategy t)
+(multi-line-defhook go multi-line-add-trailing-comma-strategy t)
+(multi-line-defhook python multi-line-add-trailing-comma-strategy t)
 
 (multi-line-defhook clojure
   (multi-line-strategy
@@ -160,14 +166,6 @@
           :split-advance-fn 'multi-line-lisp-advance-fn)
    :enter (multi-line-up-list-enter-strategy)
    :respace multi-line-lisp-respacer) t)
-
-(multi-line-defhook go
-  (multi-line-strategy
-   :respace (multi-line-respacers-with-single-line
-             (mapcar 'multi-line-trailing-comma-respacer
-                     multi-line-default-respacer-list)
-             (multi-line-trailing-comma-respacer
-              multi-line-default-single-line-respacer))) t)
 
 ;;;###autoload
 (defun multi-line-enable-mode-hooks ()

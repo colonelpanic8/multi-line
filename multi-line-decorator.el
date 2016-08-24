@@ -42,57 +42,47 @@
       (quote arg)
     `(funcall ,(car funcs) (multi-line-compose-helper ,(cdr funcs)))))
 
+;; TODO: Get rid of inheritance here
 (defclass multi-line-each-decorator (multi-line-respacer)
   ((respacer :initarg :respacer)
    (decorator :initarg :decorator)))
 
 (defmethod multi-line-respace-one ((decorator multi-line-each-decorator)
-                                   index markers)
-  (funcall (oref decorator :decorator) (oref decorator :respacer) index markers))
-
-(defclass multi-line-decorator (multi-line-respacer)
-  ((respacer :initarg :respacer)
-   (decorator :initarg :decorator)))
-
-(defmethod multi-line-respace ((decorator multi-line-decorator) markers
-                               &optional context)
-  (funcall
-   (oref decorator :decorator) (oref decorator :respacer) markers))
+                                   index candidates)
+  (funcall (oref decorator :decorator) (oref decorator :respacer) index candidates))
 
 (defmacro multi-line-pre-decorator (name &rest forms)
   "Build a constructor with name NAME that builds respacers that
 execute FORMS before respacing.  FORMS can use the variables index
-and markers which will be appropriately populated by the
+and candidates which will be appropriately populated by the
 executor."
-  `(defun ,name (respacer)
-     (make-instance
-      multi-line-each-decorator
-      :respacer respacer
-      :decorator (lambda (respacer index markers)
+  `(defun ,name (decorated-respacer)
+     (multi-line-each-decorator
+      :respacer decorated-respacer
+      :decorator (lambda (respacer index candidates)
                    ,@forms
-                   (multi-line-respace-one respacer index markers)))))
+                   (multi-line-respace-one respacer index candidates)))))
 
 (defmacro multi-line-post-decorator (name &rest forms)
   "Build a constructor with name NAME that builds respacers that
-qexecute FORMS after respacing.  FORMS can use the variables index
-and markers which will be appropriately populated by the
+execute FORMS after respacing.  FORMS can use the variables index
+and candidates which will be appropriately populated by the
 executor."
   `(defun ,name (respacer)
-     (make-instance
-      multi-line-each-decorator
+     (multi-line-each-decorator
       :respacer respacer
-      :decorator (lambda (respacer index markers)
-                   (multi-line-respace-one respacer index markers)
+      :decorator (lambda (respacer index candidates)
+                   (multi-line-respace-one respacer index candidates)
                    ,@forms))))
 
 (defmacro multi-line-post-all-decorator (name &rest forms)
   "Build a constructor with name NAME that builds respacers that
 execute FORMS after respacing all splits.  FORMS can use the
-variables index and markers which will be appropriately populated
+variables index and candidates which will be appropriately populated
 by the executor."
   `(multi-line-post-decorator
-     ,name (when (equal index (- (length markers) 1))
-             (goto-char (marker-position (car (last markers))))
+     ,name (when (equal index (- (length candidates) 1))
+             (goto-char (multi-line-candidate-position (car (last candidates))))
              ,@forms)))
 
 (multi-line-pre-decorator multi-line-space-clearing-respacer
@@ -102,8 +92,8 @@ by the executor."
   (multi-line-add-remove-or-leave-final-comma))
 
 (multi-line-post-all-decorator multi-line-reindenting-respacer
-  (indent-region (marker-position (car markers))
-                 (marker-position (nth index markers))))
+  (indent-region (multi-line-candidate-position (car candidates))
+                 (multi-line-candidate-position (nth index candidates))))
 
 (multi-line-compose multi-line-clearing-reindenting-respacer
                     'multi-line-reindenting-respacer
@@ -123,16 +113,16 @@ by the executor."
            (spanning-end (progn
                            (goto-char (+ end 1))
                            (point-marker)))
-           (space-to-restore (buffer-substring start end))))
-    (delete-region start end)
-    (let ((spanning-string (buffer-substring (marker-position spanning-start)
-                                             (marker-position spanning-end))))
-      (multi-line-respace-one (oref respacer respacer) index candidates)
-      (when (equal (buffer-substring (marker-position spanning-start)
-                                     (marker-position spanning-end))
-                   spanning-string)
-        (goto-char (marker-position start))
-        (insert space-to-restore)))))
+           (space-to-restore (buffer-substring start end)))
+      (delete-region start end)
+      (let ((spanning-string (buffer-substring (marker-position spanning-start)
+                                               (marker-position spanning-end))))
+        (multi-line-respace-one (oref respacer respacer) index candidates)
+        (when (equal (buffer-substring (marker-position spanning-start)
+                                       (marker-position spanning-end))
+                     spanning-string)
+          (goto-char (marker-position startm))
+          (insert space-to-restore))))))
 
 (defun multi-line-restoring-reindenting-respacer (respacer)
   (multi-line-reindenting-respacer

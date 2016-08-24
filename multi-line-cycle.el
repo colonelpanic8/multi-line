@@ -36,7 +36,7 @@
    (check-markers :initform t :initarg check-markers)
    (check-last-command :initform nil :initarg check-last-command)))
 
-(defmethod multi-line-respace ((cycler multi-line-cycle-respacer) markers
+(defmethod multi-line-respace ((cycler multi-line-cycle-respacer) candidates
                                &optional context)
   (let* ((respacer-name (plist-get context :respacer-name))
          (respacer-index (plist-get context :respacer-index))
@@ -46,35 +46,30 @@
               (when respacer-index
                 (nth respacer-index (oref cycler respacers))))))
     (if respacer
-        (multi-line-cycler-reset cycler)
-      (setq respacer (multi-line-cycle cycler)))
-    (multi-line-respace respacer markers context)))
+        ;; We want to reset in this case because something has been selected
+        ;; explicitly.
+        (multi-line-cycler-reset cycler nil)
+      ;; Pass in the first marker that was found so that we get consistent
+      ;; cycling behavior even if the cursor is moved.
+      (setq respacer (multi-line-cycle cycler (oref (car candidates) marker))))
+    (multi-line-respace respacer candidates context)))
 
-(defmethod multi-line-cycle ((cycler multi-line-cycle-respacer))
+(defmethod multi-line-cycle ((cycler multi-line-cycle-respacer) current-marker)
   (if (and (eq multi-line-last-cycler cycler)
            (or (not (oref cycler check-last-command))
                (equal (oref cycler command-at-last-cycle) last-command))
            (or (not (oref cycler check-markers))
-               (let ((current-marker (point-marker))
-                     (last-marker (oref cycler last-cycle-marker)))
-                 ;; Because the respace phase occurs AFTER markers
-                 ;; are obtained, but before the end of the
-                 ;; save-excursion in the execute call, and the
-                 ;; function to obtain the markers moves the cursor
-                 ;; to a final position in a deterministic way, this
-                 ;; condition will actually allow the user to move
-                 ;; their cursor within the multi-space body and
-                 ;; still get cycling behavior.
+               (let ((last-marker (oref cycler last-cycle-marker)))
                  (equal current-marker last-marker))))
       (multi-line-increment-cycle-index cycler)
-    (multi-line-cycler-reset cycler))
+    (multi-line-cycler-reset cycler current-marker))
   (multi-line-current-respacer cycler))
 
 (defmethod multi-line-current-respacer ((cycler multi-line-cycle-respacer))
   (nth (oref cycler cycle-index) (oref cycler respacers)))
 
-(defmethod multi-line-cycler-reset ((cycler multi-line-cycle-respacer))
-  (oset cycler last-cycle-marker (point-marker))
+(defmethod multi-line-cycler-reset ((cycler multi-line-cycle-respacer) current-marker)
+  (oset cycler last-cycle-marker current-marker)
   (oset cycler cycle-index 0)
   (oset cycler command-at-last-cycle this-command)
   (setq multi-line-last-cycler cycler))

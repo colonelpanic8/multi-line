@@ -24,6 +24,7 @@
 
 (require 'eieio)
 
+(require 'multi-line-candidate)
 (require 'multi-line-shared)
 
 (defclass multi-line-forward-sexp-find-strategy ()
@@ -55,10 +56,10 @@
 
 (defmethod multi-line-find ((strategy multi-line-forward-sexp-find-strategy)
                             &optional context)
-  (nconc (list (point-marker))
+  (nconc (list (multi-line-candidate))
          (cl-loop until (equal (multi-line-find-next strategy context) :done)
-                  collect (point-marker))
-         (list (point-marker))))
+                  collect (multi-line-candidate))
+         (list (multi-line-candidate))))
 
 (provide 'multi-line-find)
 ;;; multi-line-find.el ends here

@@ -23,6 +23,7 @@
 ;;; Code:
 
 (require 'cl-lib)
+(require 'dash)
 (require 's)
 
 (defun multi-line-clear-whitespace-at-point ()
@@ -92,18 +93,23 @@ character classes that will be used to find whitespace."
      (and ,@(cl-loop for predicate in predicates
                      collect (quote (apply predicate args))))))
 
-(defun multi-line-last-predicate (index markers)
-  (equal index (- (length markers) 1)))
+(defun multi-line-last-predicate (index candidates)
+  (equal index (- (length candidates) 1)))
 
-(defun multi-line-first-predicate (index markers)
+(defun multi-line-first-predicate (index candidates)
   (equal index 0))
 
 (defalias 'multi-line-first-or-last-predicate
   (multi-line-predicate-or 'multi-line-first-predicate
                            'multi-line-last-predicate))
 
-(defun multi-line-is-last-index (index alist)
-  (equal index (- (length markers) 1)))
+(defun multi-line-remove-at-indices (skip-indices list)
+  (-remove-at-indices (multi-line-actual-indices skip-indices list) list))
+
+(defun multi-line-actual-indices (skip-indices list)
+  (let ((list-length (length list)))
+    (cl-loop for index in skip-indices
+           collect (mod index list-length))))
 
 (provide 'multi-line-shared)
 ;;; multi-line-shared.el ends here
