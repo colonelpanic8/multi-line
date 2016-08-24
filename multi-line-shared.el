@@ -22,17 +22,29 @@
 
 ;;; Code:
 
+(require 'cl-lib)
 (require 's)
 
-(defun multi-line-clear-whitespace-at-point ()
-  "Erase any surrounding whitespace."
-  (interactive)
-  (re-search-backward "[^[:space:]\n]")
-  (forward-char)
-  (let ((start (point)))
-    (re-search-forward "[^[:space:]\n]")
-    (backward-char)
-    (kill-region start (point))))
+(defun multi-line-clear-whitespace-at-point (&optional whitespace-string)
+  (cl-destructuring-bind (start . end)
+      (multi-line-space-markers whitespace-string)
+    (delete-region (marker-position start) (marker-position end))))
+
+(cl-defun multi-line-space-markers
+    (&optional (space-matches-string "[:space:]\n"))
+  "Get markers delimiting whitespace at point.
+
+SPACE-MATCHES-STRING is as a string containing concatenated
+character classes that will be used to find whitespace."
+  (let (space-excludes-string (format "[^%s]" space-matches-string))
+    (re-search-backward space-excludes-string)
+    (forward-char)
+    (let* ((start (point-marker))
+           (end (progn
+                  (re-search-forward space-excludes-string)
+                  (backward-char)
+                  (point-marker))))
+      (cons start end))))
 
 (defun multi-line-add-remove-or-leave-final-comma ()
   (save-excursion
