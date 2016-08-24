@@ -61,7 +61,7 @@
 
 (defvar multi-line-skip-fill-respacer
   (multi-line-fill-column-respacer
-   :first-index 1 :final-index -3))
+   :first-index 1 :final-index -2))
 
 (defvar multi-line-default-respacer-list
   (mapcar 'multi-line-clearing-reindenting-respacer
