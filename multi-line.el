@@ -87,12 +87,7 @@
   (let ((enter-strategy (oref strategy :enter))
         (find-strategy (oref strategy :find)))
     (multi-line-enter enter-strategy context)
-    ;; TODO: This logic should probably be part of the find-strategy
-    (nconc (list (point-marker))        ;start marker
-           (cl-loop until (equal (multi-line-find-next find-strategy context) :done)
-                    collect (point-marker))
-           (list (point-marker))        ;end marker
-           )))
+    (multi-line-find find-strategy context)))
 
 (defmethod multi-line-execute ((strategy multi-line-strategy) &optional context)
   (when (or (eq context t) (equal context 'single-line))
