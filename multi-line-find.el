@@ -55,10 +55,10 @@
 
 (defmethod multi-line-find ((strategy multi-line-forward-sexp-find-strategy)
                             &optional context)
-  (mapcar (nconc (list (point-marker))
-                 (cl-loop until (equal (multi-line-find-next find-strategy context) :done)
-                          collect (point-marker))
-                 (list (point-marker)))))
+  (nconc (list (point-marker))
+         (cl-loop until (equal (multi-line-find-next find-strategy context) :done)
+                  collect (point-marker))
+         (list (point-marker))))
 
 (provide 'multi-line-find)
 ;;; multi-line-find.el ends here
