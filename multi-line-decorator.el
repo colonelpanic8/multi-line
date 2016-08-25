@@ -23,6 +23,7 @@
 ;;; Code:
 
 (require 'eieio)
+(require 'shut-up)
 
 (require 'multi-line-respace)
 (require 'multi-line-shared)
@@ -92,8 +93,9 @@ by the executor."
   (multi-line-add-remove-or-leave-final-comma))
 
 (multi-line-post-all-decorator multi-line-reindenting-respacer
-  (indent-region (multi-line-candidate-position (car candidates))
-                 (multi-line-candidate-position (nth index candidates))))
+  (shut-up
+    (indent-region (multi-line-candidate-position (car candidates))
+                   (multi-line-candidate-position (nth index candidates)))))
 
 (multi-line-compose multi-line-clearing-reindenting-respacer
                     'multi-line-reindenting-respacer
