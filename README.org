@@ -12,15 +12,16 @@ correctly across many different programming languages.
 
 * Officially Supported Languages
 The following languages are officially supported by multi-line
-- python
-- golang
-- emacs-lisp
-- Clojure
-- javascript
 - C/C++
-- Ruby
-- Scala
-- Java
+- clojure
+- emacs-lisp
+- golang
+- java
+- javascript
+- python
+- ruby
+- rust
+- scala
 
 It is likely that multi-line will function pretty well in any language using
 typical brace/parenthesis/comma syntax, provided that the major mode has
