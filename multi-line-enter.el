@@ -32,21 +32,5 @@
   (multi-line-up-list-back)
   (forward-char))
 
-(defclass multi-line-forward-sexp-enter-strategy ()
-  ((done-regex :initarg :done-regex :initform "[[:space:]]*[[({]")
-   (advance-fn :initarg :advance-fn :initform 'multi-line-lparenthesis-advance)
-   (inside-fn :initarg :inside-fn :initform 'multi-line-up-list-back)))
-
-(defmethod multi-line-enter ((enter multi-line-forward-sexp-enter-strategy))
-  (condition-case nil
-      (let (last-point)
-        (while (not (or (looking-at (oref enter :done-regex))
-                        (equal last-point (point))))
-          (setq last-point (point))
-          (forward-sexp)))
-    ('scan-error
-     (funcall (oref enter :inside-fn))))
-  (funcall (oref enter :advance-fn)))
-
 (provide 'multi-line-enter)
 ;;; multi-line-enter.el ends here
