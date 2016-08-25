@@ -69,6 +69,8 @@ character classes that will be used to find whitespace."
 (defun multi-line-up-list-back ()
   "Go to the beginning of a statement from inside the statement."
   (interactive)
+  ;; TODO: This could really used some explanation. I have no idea what is going
+  ;; on here now.
   (let ((string-start (nth 8 (syntax-ppss))))
     (when string-start
       (goto-char string-start)))
