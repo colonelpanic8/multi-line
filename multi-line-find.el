@@ -35,8 +35,8 @@
 
 (defmethod multi-line-should-stop ((strategy multi-line-forward-sexp-find-strategy))
   (cond
-   ((looking-at (oref strategy :done-regex)) :done)
-   ((looking-at (oref strategy :split-regex)) :candidate)
+   ((looking-at (oref strategy done-regex)) :done)
+   ((looking-at (oref strategy split-regex)) :candidate)
    (t nil)))
 
 (defmethod multi-line-find-next ((strategy multi-line-forward-sexp-find-strategy)
@@ -51,14 +51,21 @@
                  (setq this-point (point)))
       ('error (setq last :done))
       nil)
-    (when (equal last :candidate) (funcall (oref strategy :split-advance-fn)))
+    (when (equal last :candidate)
+      (funcall (oref strategy :split-advance-fn)))
     last))
 
 (defmethod multi-line-find ((strategy multi-line-forward-sexp-find-strategy)
                             &optional context)
   (nconc (list (multi-line-candidate))
-         (cl-loop until (equal (multi-line-find-next strategy context) :done)
-                  collect (multi-line-candidate))
+         (progn
+           ;; XXX: This is a hack to make hash literals work in ruby. For some
+           ;; reason if you execute forward sexp at a '{' but there is a newline
+           ;; immediately following that character it passes over the entire
+           ;; hash body.
+           (re-search-forward "[^[:space:]\n]") (backward-char)
+          (cl-loop until (equal (multi-line-find-next strategy context) :done)
+                   collect (multi-line-candidate)))
          (list (multi-line-candidate))))
 
 (provide 'multi-line-find)
