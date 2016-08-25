@@ -190,7 +190,8 @@
 
 When ARG is provided single-line the statement at point instead."
   (interactive "P")
-  (let ((for-single-line (if arg t nil))) ; TODO(imalison): better cast to bool
+  ;; TODO(imalison): Is there a better way to cast to bool?
+  (let ((for-single-line (if arg t nil)))
     (multi-line-execute multi-line-current-strategy for-single-line)))
 
 ;;;###autoload
