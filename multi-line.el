@@ -78,9 +78,9 @@
 
 (defclass multi-line-strategy ()
   ((enter :initarg :enter :initform
-          (make-instance multi-line-up-list-enter-strategy))
+          (multi-line-up-list-enter-strategy))
    (find :initarg :find :initform
-         (make-instance multi-line-forward-sexp-find-strategy))
+         (multi-line-forward-sexp-find-strategy))
    (respace :initarg :respace :initform (progn
                                           multi-line-default-respacer))))
 
@@ -143,7 +143,6 @@
           :split-regex "[[:space:]\n]+"
           :done-regex "[[:space:]]*)"
           :split-advance-fn 'multi-line-lisp-advance-fn)
-   :enter (multi-line-up-list-enter-strategy)
    :respace multi-line-lisp-respacer) t)
 
 (defvar multi-line-add-trailing-comma-strategy
@@ -165,7 +164,6 @@
           :split-regex "[[:space:]\n]+"
           :done-regex "[[:space:]]*)]}"
           :split-advance-fn 'multi-line-lisp-advance-fn)
-   :enter (multi-line-up-list-enter-strategy)
    :respace multi-line-lisp-respacer) t)
 
 ;;;###autoload
