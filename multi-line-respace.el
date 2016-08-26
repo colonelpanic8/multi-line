@@ -120,7 +120,8 @@
 (defclass multi-line-fixed-fill-respacer (multi-line-fill-respacer)
   ((newline-at :initarg :newline-at :initform 80)))
 
-(defmethod multi-line-get-fill-column ((respacer multi-line-fixed-fill-respacer))
+(defmethod multi-line-get-fill-column
+  ((respacer multi-line-fixed-fill-respacer))
   (oref respacer newline-at))
 
 (defclass multi-line-fill-column-respacer (multi-line-fill-respacer) nil)
@@ -158,8 +159,9 @@
            finally return (oref respacer default)))
 
 (defun multi-line-never-newline ()
-  (multi-line-selecting-respacer :default (multi-line-space)
-                                 :indices-to-respacer (list (cons (list 0 -1) nil))))
+  (multi-line-selecting-respacer
+   :default (multi-line-space)
+   :indices-to-respacer (list (cons (list 0 -1) nil))))
 
 (provide 'multi-line-respace)
 ;;; multi-line-respace.el ends here

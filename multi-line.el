@@ -157,12 +157,12 @@
 (multi-line-defhook emacs-lisp multi-line-lisp-strategy t)
 
 (multi-line-defhook clojure
-                    (multi-line-strategy
-                     :find (multi-line-forward-sexp-find-strategy
-                            :split-regex "[[:space:]\n]+"
-                            :done-regex "[[:space:]]*)]}"
-                            :split-advance-fn 'multi-line-lisp-advance-fn)
-                     :respace multi-line-lisp-respacer) t)
+  (multi-line-strategy
+   :find (multi-line-forward-sexp-find-strategy
+          :split-regex "[[:space:]\n]+"
+          :done-regex "[[:space:]]*)]}"
+          :split-advance-fn 'multi-line-lisp-advance-fn)
+   :respace multi-line-lisp-respacer) t)
 
 ;;;###autoload
 (defun multi-line-enable-mode-hooks ()
