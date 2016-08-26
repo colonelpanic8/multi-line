@@ -1,0 +1,7 @@
+language: emacs-lisp
+env:
+  - EMACS=emacs24
+before_script:
+  - sh travis/provision.sh
+script:
+  - make EMACS=${EMACS} test
