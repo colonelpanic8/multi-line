@@ -132,7 +132,8 @@
          (hook-name (intern (concat base-string "-mode-hook")))
          (mode-hook-name (intern (concat mode-string "-mode-hook"))))
     `(progn
-       (defvar ,variable-name ,strategy-form)
+       (defvar ,variable-name)
+       (setq ,variable-name ,strategy-form)
        (defun ,hook-name ()
          (setq-local multi-line-current-strategy ,variable-name))
        ,(if use-global-enable

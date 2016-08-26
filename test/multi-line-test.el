@@ -21,12 +21,54 @@
 
 ;;; Code:
 
+(require 'cl-lib)
 (require 'ert)
 
 (require 'multi-line)
 
-(ert-deftest multi-line-always-newline-in-python ()
-  t)
+(cl-defmacro multi-line-deftest
+    (name initial-text expected-text &key strategy ert-forms
+          (setup '((emacs-lisp-mode) (setq fill-column 70) (forward-char))))
+  (let ((expected-texts (if (listp expected-text)
+                           expected-text
+                          `(list ,expected-text))))
+    `(ert-deftest ,name ()
+       ,@ert-forms
+       (with-temp-buffer
+         (insert ,initial-text)
+         ,(when strategy
+            `(setq multi-line-current-strategy ,strategy))
+         (goto-char (point-min))
+         ,@setup
+         (cl-loop for expected-text in ,expected-texts
+                  do (multi-line nil)
+                  (should
+                   (equal expected-text (buffer-string)))))
+       t)))
+
+(multi-line-deftest multi-line-test-basic-elisp
+"(a bbbbbbbbbbbbbbbbbb ccccccccccccccccccccc ddddddddeeeeeeeeekkkkkkkkkk ffffffffff gggggggggggg)"
+"(a bbbbbbbbbbbbbbbbbb ccccccccccccccccccccc
+   ddddddddeeeeeeeeekkkkkkkkkk ffffffffff gggggggggggg)")
+
+(multi-line-deftest multi-line-test-basic-python
+"function(nested(fdasfdsaf, fdasfdsaf, fdasfdsaf, fdasfdsa), other, next, another_nested_call(more, cool, quite))"
+                    (list
+"function(
+    nested(fdasfdsaf, fdasfdsaf, fdasfdsaf, fdasfdsa), other, next,
+    another_nested_call(more, cool, quite),
+)"
+"function(
+    nested(fdasfdsaf, fdasfdsaf, fdasfdsaf, fdasfdsa),
+    other,
+    next,
+    another_nested_call(more, cool, quite),
+)"
+"function(nested(fdasfdsaf, fdasfdsaf, fdasfdsaf, fdasfdsa), other, next,
+         another_nested_call(more, cool, quite))"
+"function(nested(fdasfdsaf, fdasfdsaf, fdasfdsaf, fdasfdsa), other, next, another_nested_call(more, cool, quite))")
+                    :setup ((python-mode) (setq fill-column 80)
+                            (search-forward "(") (forward-char)))
 
 (provide 'multi-line-test)
 ;;; multi-line-test.el ends here
