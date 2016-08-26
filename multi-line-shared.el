@@ -93,12 +93,12 @@ character classes that will be used to find whitespace."
 (defmacro multi-line-predicate-and (&rest predicates)
   `(lambda (&rest args)
      (and ,@(cl-loop for predicate in predicates
-                     collect (quote (apply predicate args))))))
+                     collect `(apply ,predicate args)))))
 
 (defun multi-line-last-predicate (index candidates)
   (equal index (- (length candidates) 1)))
 
-(defun multi-line-first-predicate (index candidates)
+(defun multi-line-first-predicate (index _candidates)
   (equal index 0))
 
 (defalias 'multi-line-first-or-last-predicate

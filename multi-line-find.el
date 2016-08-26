@@ -33,30 +33,29 @@
    (split-advance-fn :initarg :split-advance-fn :initform
                      'multi-line-comma-advance)))
 
-(defmethod multi-line-should-stop ((strategy multi-line-forward-sexp-find-strategy))
+(cl-defmethod multi-line-should-stop ((strategy multi-line-forward-sexp-find-strategy))
   (cond
    ((looking-at (oref strategy done-regex)) :done)
    ((looking-at (oref strategy split-regex)) :candidate)
    (t nil)))
 
-(defmethod multi-line-find-next ((strategy multi-line-forward-sexp-find-strategy)
-                                 &optional context)
+(cl-defmethod multi-line-find-next ((strategy multi-line-forward-sexp-find-strategy)
+                                    &optional _context)
   (let (last last-point this-point)
     (setq this-point (point))
-    (condition-case nil
+    (condition-case _ignored
         (while (and (not (equal this-point last-point))
                     (not (setq last (multi-line-should-stop strategy))))
-                 (forward-sexp)
-                 (setq last-point this-point)
-                 (setq this-point (point)))
-      ('error (setq last :done))
-      nil)
+          (forward-sexp)
+          (setq last-point this-point)
+          (setq this-point (point)))
+      ('error (setq last :done)))
     (when (equal last :candidate)
-      (funcall (oref strategy :split-advance-fn)))
+      (funcall (oref strategy split-advance-fn)))
     last))
 
-(defmethod multi-line-find ((strategy multi-line-forward-sexp-find-strategy)
-                            &optional context)
+(cl-defmethod multi-line-find ((strategy multi-line-forward-sexp-find-strategy)
+                               &optional context)
   (nconc (list (multi-line-candidate))
          (progn
            ;; XXX: This is a hack to make hash literals work in ruby. For some
@@ -64,8 +63,8 @@
            ;; immediately following that character it passes over the entire
            ;; hash body.
            (re-search-forward "[^[:space:]\n]") (backward-char)
-          (cl-loop until (equal (multi-line-find-next strategy context) :done)
-                   collect (multi-line-candidate)))
+           (cl-loop until (equal (multi-line-find-next strategy context) :done)
+                    collect (multi-line-candidate)))
          (list (multi-line-candidate))))
 
 (provide 'multi-line-find)

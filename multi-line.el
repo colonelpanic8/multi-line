@@ -84,23 +84,23 @@
    (respace :initarg :respace :initform (progn
                                           multi-line-default-respacer))))
 
-(defmethod multi-line-candidates ((strategy multi-line-strategy)
-                                  &optional context)
+(cl-defmethod multi-line-candidates ((strategy multi-line-strategy)
+                                     &optional context)
   "Get the multi-line candidates at point."
-  (let ((enter-strategy (oref strategy :enter))
-        (find-strategy (oref strategy :find)))
+  (let ((enter-strategy (oref strategy enter))
+        (find-strategy (oref strategy find)))
     (multi-line-enter enter-strategy context)
     (multi-line-find find-strategy context)))
 
-(defmethod multi-line-execute ((strategy multi-line-strategy) &optional context)
+(cl-defmethod multi-line-execute ((strategy multi-line-strategy) &optional context)
   (when (or (eq context t) (equal context 'single-line))
     (setq context (plist-put nil :respacer-name :single-line)))
   (save-excursion
     (let ((candidates (multi-line-candidates strategy)))
-      (multi-line-respace (oref strategy :respace) candidates context))))
+      (multi-line-respace (oref strategy respace) candidates context))))
 
 (defvar-local multi-line-current-strategy
-  (make-instance multi-line-strategy)
+  (multi-line-strategy)
   "The multi-line strategy that will be used by the command `multi-line'.")
 
 (defun multi-line-lisp-advance-fn ()
@@ -114,16 +114,14 @@
 (defvar multi-line-mode-to-hook nil)
 
 (defmacro multi-line-defhook
-    (mode-name strategy-form &optional use-global-enable other cray)
-  (let* ((mode-string (symbol-name mode-name))
+    (the-mode-name strategy-form &optional use-global-enable)
+  (let* ((mode-string (symbol-name the-mode-name))
          (base-string (concat multi-line-defhook-prefix mode-string))
          (variable-name (intern (concat base-string "-strategy")))
          (hook-name (intern (concat base-string "-mode-hook")))
          (mode-hook-name (intern (concat mode-string "-mode-hook"))))
-    `(eval-and-compile
-       (defvar ,variable-name)
-       ;; Doing a setq separately lets use override any existing value
-       (setq ,variable-name ,strategy-form)
+    `(progn
+       (defvar ,variable-name ,strategy-form)
        (defun ,hook-name ()
          (setq-local multi-line-current-strategy ,variable-name))
        ,(if use-global-enable
@@ -153,10 +151,10 @@
              (multi-line-trailing-comma-respacer
               multi-line-default-single-line-respacer))))
 
+(multi-line-defhook python multi-line-add-trailing-comma-strategy t)
+(multi-line-defhook go multi-line-add-trailing-comma-strategy t)
 (multi-line-defhook lisp multi-line-lisp-strategy t)
 (multi-line-defhook emacs-lisp multi-line-lisp-strategy t)
-(multi-line-defhook go multi-line-add-trailing-comma-strategy t)
-(multi-line-defhook python multi-line-add-trailing-comma-strategy t)
 
 (multi-line-defhook clojure
   (multi-line-strategy
