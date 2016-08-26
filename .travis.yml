@@ -3,7 +3,7 @@ before_install:
   - source travis-evm-cask.sh
 install:
   # Install our packages
-  - make install
+  - make compile
 script:
   # Run the unit tests
   - make EMACS=$EMACS test
