@@ -6,4 +6,4 @@ install:
   - make compile
 script:
   # Run the unit tests
-  - make EMACS=$EMACS test
+  - make test
