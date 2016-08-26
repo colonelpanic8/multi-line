@@ -57,7 +57,6 @@ clojure programming language.
           :split-regex "[[:space:]\n]+"
           :done-regex "[[:space:]]*)]}"
           :split-advance-fn 'multi-line-lisp-advance-fn)
-   :enter (multi-line-up-list-enter-strategy)
    :respace multi-line-lisp-respacer))
 #+END_SRC
 
@@ -70,8 +69,6 @@ This expands to
         (multi-line-strategy :find
                              (multi-line-forward-sexp-find-strategy :split-regex "[[:space:]
 ]+" :done-regex "[[:space:]]*)]}" :split-advance-fn 'multi-line-lisp-advance-fn)
-                             :enter
-                             (multi-line-up-list-enter-strategy)
                              :respace multi-line-lisp-respacer))
   (defun multi-line-clojure-mode-hook nil
     (setq-local multi-line-current-strategy multi-line-clojure-strategy))
