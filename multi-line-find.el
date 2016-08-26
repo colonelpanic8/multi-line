@@ -33,14 +33,15 @@
    (split-advance-fn :initarg :split-advance-fn :initform
                      'multi-line-comma-advance)))
 
-(defmethod multi-line-should-stop ((strategy multi-line-forward-sexp-find-strategy))
+(defmethod multi-line-should-stop
+  ((strategy multi-line-forward-sexp-find-strategy))
   (cond
    ((looking-at (oref strategy done-regex)) :done)
    ((looking-at (oref strategy split-regex)) :candidate)
    (t nil)))
 
-(defmethod multi-line-find-next ((strategy multi-line-forward-sexp-find-strategy)
-                                 &optional _context)
+(defmethod multi-line-find-next
+  ((strategy multi-line-forward-sexp-find-strategy) &optional _context)
   (let (last last-point this-point)
     (setq this-point (point))
     (condition-case _ignored
