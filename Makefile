@@ -14,8 +14,11 @@ $(OBJECTS): .cask
 
 compile: $(OBJECTS)
 
-clean:
-	rm -rf $(OBJECTS) .cask/
+clean-elc:
+	rm -f $(OBJECTS)
+
+clean: clean-elc
+	rm -rf .cask/
 
 test: $(OBJECTS)
 	cask exec ert-runner -L $(PWD)

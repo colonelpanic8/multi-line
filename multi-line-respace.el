@@ -60,7 +60,7 @@
 (defclass multi-line-fill-respacer (multi-line-respacer)
   ((newline-respacer
     :initarg :newline-respacer
-    :initform (multi-line-always-newline))
+    :initform (make-instance multi-line-always-newline))
    (sl-respacer
     :initarg :sl-respacer
     :initform (multi-line-never-newline))
@@ -159,8 +159,8 @@
            finally return (oref respacer default)))
 
 (defun multi-line-never-newline ()
-  (multi-line-selecting-respacer
-   :default (multi-line-space)
+  (make-instance multi-line-selecting-respacer
+   :default (make-instance multi-line-space)
    :indices-to-respacer (list (cons (list 0 -1) nil))))
 
 (provide 'multi-line-respace)

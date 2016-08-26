@@ -52,8 +52,8 @@ clojure programming language.
 
 #+BEGIN_SRC emacs-lisp
 (multi-line-defhook clojure
-  (multi-line-strategy
-   :find (multi-line-forward-sexp-find-strategy
+  (make-instance multi-line-strategy
+   :find (make-instance multi-line-forward-sexp-find-strategy
           :split-regex "[[:space:]\n]+"
           :done-regex "[[:space:]]*)]}"
           :split-advance-fn 'multi-line-lisp-advance-fn)
@@ -66,10 +66,13 @@ This expands to
 (eval-and-compile
   (defvar multi-line-clojure-strategy)
   (setq multi-line-clojure-strategy
-        (multi-line-strategy :find
-                             (multi-line-forward-sexp-find-strategy :split-regex "[[:space:]
-]+" :done-regex "[[:space:]]*)]}" :split-advance-fn 'multi-line-lisp-advance-fn)
-                             :respace multi-line-lisp-respacer))
+        (make-instance multi-line-strategy
+                       :find
+                       (make-instance multi-line-forward-sexp-find-strategy
+                                      :split-regex "[[:space:]]+"
+                                      :done-regex "[[:space:]]*)]}"
+                                      :split-advance-fn 'multi-line-lisp-advance-fn)
+                       :respace multi-line-lisp-respacer))
   (defun multi-line-clojure-mode-hook nil
     (setq-local multi-line-current-strategy multi-line-clojure-strategy))
   (add-hook 'clojure-mode-hook 'multi-line-clojure-mode-hook t))
@@ -83,7 +86,7 @@ you might set up the default multi-line strategy as follows:
 (setq-default multi-line-current-strategy
               (multi-line-strategy
                :respace (multi-line-default-respacers
-                         (multi-line-always-newline))))
+                         (make-instance multi-line-always-newline))))
 #+END_SRC
 ** Built-in Mode Specific Behavior
 multi-line has some built in mode specific behavior that is enabled by default.

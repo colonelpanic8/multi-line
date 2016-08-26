@@ -47,7 +47,7 @@
    (multi-line-never-newline)))
 
 (defvar multi-line-skip-first-and-last-respacer
-  (multi-line-removing-respacer :respacer (multi-line-always-newline)))
+  (multi-line-removing-respacer :respacer (make-instance multi-line-always-newline)))
 
 (cl-defun multi-line-respacers-with-single-line
     (respacers
@@ -60,29 +60,32 @@
   (multi-line-respacers-with-single-line respacers))
 
 (defvar multi-line-skip-fill-respacer
-  (multi-line-fill-column-respacer
+  (make-instance multi-line-fill-column-respacer
    :first-index 1 :final-index -2))
 
 (defvar multi-line-default-respacer-list
   (mapcar 'multi-line-clearing-reindenting-respacer
-          (let ((always-newline (multi-line-always-newline)))
+          (let ((always-newline (make-instance multi-line-always-newline)))
             (list (multi-line-selecting-respacer
                    :indices-to-respacer (list (cons (list 0 -1) always-newline))
-                   :default (multi-line-fill-column-respacer))
+                   :default (make-instance multi-line-fill-column-respacer))
                   always-newline
-                  (multi-line-fill-column-respacer
+                  (make-instance multi-line-fill-column-respacer
                    :first-index 1 :final-index -2)))))
 
 (defvar multi-line-default-respacer
   (multi-line-respacers-with-single-line multi-line-default-respacer-list))
 
+(defun multi-line-get-default-respacer ()
+  multi-line-default-respacer)
+
 (defclass multi-line-strategy ()
   ((enter :initarg :enter :initform
-          (multi-line-up-list-enter-strategy))
+          (make-instance multi-line-up-list-enter-strategy))
    (find :initarg :find :initform
-         (multi-line-forward-sexp-find-strategy))
-   (respace :initarg :respace :initform (progn
-                                          multi-line-default-respacer))))
+         (make-instance multi-line-forward-sexp-find-strategy))
+   (respace :initarg :respace
+            :initform (multi-line-get-default-respacer))))
 
 (defmethod multi-line-candidates ((strategy multi-line-strategy)
                                   &optional context)
@@ -100,7 +103,7 @@
       (multi-line-respace (oref strategy respace) candidates context))))
 
 (defvar-local multi-line-current-strategy
-  (multi-line-strategy)
+  (make-instance multi-line-strategy)
   "The multi-line strategy that will be used by the command `multi-line'.")
 
 (defun multi-line-lisp-advance-fn ()
