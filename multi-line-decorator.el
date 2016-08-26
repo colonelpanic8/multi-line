@@ -49,7 +49,7 @@
   ((respacer :initarg :respacer)
    (decorator :initarg :decorator)))
 
-(cl-defmethod multi-line-respace-one ((decorator multi-line-each-decorator)
+(defmethod multi-line-respace-one ((decorator multi-line-each-decorator)
                                    index candidates)
   (funcall (oref decorator decorator) (oref decorator respacer) index
            candidates))
@@ -84,20 +84,20 @@ execute FORMS after respacing all splits.  FORMS can use the
 variables index and candidates which will be appropriately populated
 by the executor."
   `(multi-line-post-decorator
-     ,name (when (equal index (- (length candidates) 1))
-             (goto-char (multi-line-candidate-position (car (last candidates))))
-             ,@forms)))
+    ,name (when (equal index (- (length candidates) 1))
+            (goto-char (multi-line-candidate-position (car (last candidates))))
+            ,@forms)))
 
 (multi-line-pre-decorator multi-line-space-clearing-respacer
-  (multi-line-clear-whitespace-at-point))
+                          (multi-line-clear-whitespace-at-point))
 
 (multi-line-post-all-decorator multi-line-trailing-comma-respacer
-  (multi-line-add-remove-or-leave-final-comma))
+                               (multi-line-add-remove-or-leave-final-comma))
 
 (multi-line-post-all-decorator multi-line-reindenting-respacer
-  (shut-up
-    (indent-region (multi-line-candidate-position (car candidates))
-                   (multi-line-candidate-position (nth index candidates)))))
+                               (shut-up
+                                 (indent-region (multi-line-candidate-position (car candidates))
+                                                (multi-line-candidate-position (nth index candidates)))))
 
 (multi-line-compose multi-line-clearing-reindenting-respacer
                     'multi-line-reindenting-respacer
@@ -106,7 +106,7 @@ by the executor."
 (defclass multi-line-space-restoring-respacer ()
   ((respacer :initarg :respacer)))
 
-(cl-defmethod multi-line-respace-one ((respacer multi-line-space-restoring-respacer)
+(defmethod multi-line-respace-one ((respacer multi-line-space-restoring-respacer)
                                    index candidates)
   (cl-destructuring-bind (startm . endm) (multi-line-space-markers)
     (let* ((start (marker-position startm))

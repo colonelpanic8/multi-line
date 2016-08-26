@@ -36,7 +36,7 @@
    (check-markers :initform t :initarg check-markers)
    (check-last-command :initform nil :initarg check-last-command)))
 
-(cl-defmethod multi-line-respace ((cycler multi-line-cycle-respacer) candidates
+(defmethod multi-line-respace ((cycler multi-line-cycle-respacer) candidates
                                &optional context)
   (let* ((respacer-name (plist-get context :respacer-name))
          (respacer-index (plist-get context :respacer-index))
@@ -54,7 +54,7 @@
       (setq respacer (multi-line-cycle cycler (oref (car candidates) marker))))
     (multi-line-respace respacer candidates context)))
 
-(cl-defmethod multi-line-cycle ((cycler multi-line-cycle-respacer) current-marker)
+(defmethod multi-line-cycle ((cycler multi-line-cycle-respacer) current-marker)
   (if (and (eq multi-line-last-cycler cycler)
            (or (not (oref cycler check-last-command))
                (equal (oref cycler command-at-last-cycle) last-command))
@@ -65,16 +65,16 @@
     (multi-line-cycler-reset cycler current-marker))
   (multi-line-current-respacer cycler))
 
-(cl-defmethod multi-line-current-respacer ((cycler multi-line-cycle-respacer))
+(defmethod multi-line-current-respacer ((cycler multi-line-cycle-respacer))
   (nth (oref cycler cycle-index) (oref cycler respacers)))
 
-(cl-defmethod multi-line-cycler-reset ((cycler multi-line-cycle-respacer) current-marker)
+(defmethod multi-line-cycler-reset ((cycler multi-line-cycle-respacer) current-marker)
   (oset cycler last-cycle-marker current-marker)
   (oset cycler cycle-index 0)
   (oset cycler command-at-last-cycle this-command)
   (setq multi-line-last-cycler cycler))
 
-(cl-defmethod multi-line-increment-cycle-index ((cycler multi-line-cycle-respacer)
+(defmethod multi-line-increment-cycle-index ((cycler multi-line-cycle-respacer)
                                              &optional amount)
   (unless amount (setq amount 1))
   (oset cycler cycle-index

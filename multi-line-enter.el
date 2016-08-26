@@ -27,8 +27,8 @@
 
 (defclass multi-line-up-list-enter-strategy () nil)
 
-(cl-defmethod multi-line-enter ((_enter multi-line-up-list-enter-strategy)
-                                &optional _context)
+(defmethod multi-line-enter ((_enter multi-line-up-list-enter-strategy)
+                             &optional _context)
   (multi-line-up-list-back)
   (forward-char))
 

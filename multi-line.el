@@ -84,15 +84,15 @@
    (respace :initarg :respace :initform (progn
                                           multi-line-default-respacer))))
 
-(cl-defmethod multi-line-candidates ((strategy multi-line-strategy)
-                                     &optional context)
+(defmethod multi-line-candidates ((strategy multi-line-strategy)
+                                  &optional context)
   "Get the multi-line candidates at point."
   (let ((enter-strategy (oref strategy enter))
         (find-strategy (oref strategy find)))
     (multi-line-enter enter-strategy context)
     (multi-line-find find-strategy context)))
 
-(cl-defmethod multi-line-execute ((strategy multi-line-strategy) &optional context)
+(defmethod multi-line-execute ((strategy multi-line-strategy) &optional context)
   (when (or (eq context t) (equal context 'single-line))
     (setq context (plist-put nil :respacer-name :single-line)))
   (save-excursion
@@ -157,12 +157,12 @@
 (multi-line-defhook emacs-lisp multi-line-lisp-strategy t)
 
 (multi-line-defhook clojure
-  (multi-line-strategy
-   :find (multi-line-forward-sexp-find-strategy
-          :split-regex "[[:space:]\n]+"
-          :done-regex "[[:space:]]*)]}"
-          :split-advance-fn 'multi-line-lisp-advance-fn)
-   :respace multi-line-lisp-respacer) t)
+                    (multi-line-strategy
+                     :find (multi-line-forward-sexp-find-strategy
+                            :split-regex "[[:space:]\n]+"
+                            :done-regex "[[:space:]]*)]}"
+                            :split-advance-fn 'multi-line-lisp-advance-fn)
+                     :respace multi-line-lisp-respacer) t)
 
 ;;;###autoload
 (defun multi-line-enable-mode-hooks ()

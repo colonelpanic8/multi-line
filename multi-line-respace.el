@@ -30,8 +30,8 @@
 
 (defclass multi-line-respacer () nil)
 
-(cl-defmethod multi-line-respace ((respacer multi-line-respacer) candidates
-                                  &optional _context)
+(defmethod multi-line-respace ((respacer multi-line-respacer) candidates
+                               &optional _context)
   (cl-loop for candidate being the elements of candidates using (index i) do
            (goto-char (multi-line-candidate-position candidate))
            (multi-line-respace-one respacer i candidates)))
@@ -39,12 +39,12 @@
 (defclass multi-line-space (multi-line-respacer)
   ((spacer :initarg :spacer :initform " ")))
 
-(cl-defmethod multi-line-respace-one ((respacer multi-line-space)
-                                      _index _candidates)
+(defmethod multi-line-respace-one ((respacer multi-line-space)
+                                   _index _candidates)
   (when (not (multi-line-spacer-at-point respacer))
     (insert (oref respacer spacer))))
 
-(cl-defmethod multi-line-spacer-at-point ((respacer multi-line-space))
+(defmethod multi-line-spacer-at-point ((respacer multi-line-space))
   ;; TODO/XXX: This would cause problems with a spacer that was more than one
   ;; character long.
   (save-excursion (re-search-backward (format "[^%s]" (oref respacer spacer)))
@@ -53,8 +53,8 @@
 
 (defclass multi-line-always-newline (multi-line-respacer) nil)
 
-(cl-defmethod multi-line-respace-one ((_respacer multi-line-always-newline)
-                                      _index _candidates)
+(defmethod multi-line-respace-one ((_respacer multi-line-always-newline)
+                                   _index _candidates)
   (newline-and-indent))
 
 (defclass multi-line-fill-respacer (multi-line-respacer)
@@ -67,23 +67,23 @@
    (first-index :initform 0 :initarg :first-index)
    (final-index :initform -1 :initarg :final-index)))
 
-(cl-defmethod multi-line-should-newline ((respacer multi-line-fill-respacer)
-                                         index candidates)
+(defmethod multi-line-should-newline ((respacer multi-line-fill-respacer)
+                                      index candidates)
   (let ((candidates-length (length candidates)))
     (when  (<= (multi-line-first-index respacer candidates-length)
                index (multi-line-final-index respacer candidates-length))
       (multi-line-check-fill-column respacer index candidates))))
 
-(cl-defmethod multi-line-first-index ((respacer multi-line-fill-respacer)
-                                      candidates-length)
+(defmethod multi-line-first-index ((respacer multi-line-fill-respacer)
+                                   candidates-length)
   (mod (oref respacer first-index) candidates-length))
 
-(cl-defmethod multi-line-final-index ((respacer multi-line-fill-respacer)
-                                      candidates-length)
+(defmethod multi-line-final-index ((respacer multi-line-fill-respacer)
+                                   candidates-length)
   (mod (oref respacer final-index) candidates-length))
 
-(cl-defmethod multi-line-check-fill-column ((respacer multi-line-fill-respacer)
-                                            index candidates)
+(defmethod multi-line-check-fill-column ((respacer multi-line-fill-respacer)
+                                         index candidates)
   (let* ((candidate-length (length candidates))
          (next-index (+ index 1))
          (final-index (multi-line-final-index respacer candidate-length))
@@ -109,8 +109,8 @@
             (current-column))))
     (> next-candidate-column (multi-line-get-fill-column respacer))))
 
-(cl-defmethod multi-line-respace-one ((respacer multi-line-fill-respacer)
-                                      index candidates)
+(defmethod multi-line-respace-one ((respacer multi-line-fill-respacer)
+                                   index candidates)
   (let ((selected
          (if (multi-line-should-newline respacer index candidates)
              (oref respacer newline-respacer)
@@ -120,20 +120,20 @@
 (defclass multi-line-fixed-fill-respacer (multi-line-fill-respacer)
   ((newline-at :initarg :newline-at :initform 80)))
 
-(cl-defmethod multi-line-get-fill-column ((respacer multi-line-fixed-fill-respacer))
+(defmethod multi-line-get-fill-column ((respacer multi-line-fixed-fill-respacer))
   (oref respacer newline-at))
 
 (defclass multi-line-fill-column-respacer (multi-line-fill-respacer) nil)
 
-(cl-defmethod multi-line-get-fill-column ((_r multi-line-fill-column-respacer))
+(defmethod multi-line-get-fill-column ((_r multi-line-fill-column-respacer))
   fill-column)
 
 (defclass multi-line-removing-respacer nil
   ((skip-indices :initarg :skip-indices :initform '(0 -1))
    (respacer :initarg :respacer)))
 
-(cl-defmethod multi-line-respace ((respacer multi-line-removing-respacer)
-                                  candidates &optional context)
+(defmethod multi-line-respace ((respacer multi-line-removing-respacer)
+                               candidates &optional context)
   (multi-line-respace
    (oref respacer respacer)
    (multi-line-remove-at-indices (oref respacer skip-indices) candidates)
@@ -143,14 +143,14 @@
   ((indices-to-respacer :initarg :indices-to-respacer)
    (default :initarg :default :initform nil)))
 
-(cl-defmethod multi-line-respace-one ((respacer multi-line-selecting-respacer)
-                                      index candidates)
+(defmethod multi-line-respace-one ((respacer multi-line-selecting-respacer)
+                                   index candidates)
   (let ((selected (multi-line-select-respacer respacer index candidates)))
     (when selected
       (multi-line-respace-one selected index candidates))))
 
-(cl-defmethod multi-line-select-respacer ((respacer multi-line-selecting-respacer)
-                                          index candidates)
+(defmethod multi-line-select-respacer ((respacer multi-line-selecting-respacer)
+                                       index candidates)
   (cl-loop for (indices . r) in (oref respacer indices-to-respacer)
            when
            (memq index (multi-line-actual-indices indices candidates))
