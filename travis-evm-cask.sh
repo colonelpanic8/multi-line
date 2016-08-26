@@ -18,6 +18,6 @@ export PATH="$HOME/.cask/bin:$HOME/.evm/bin:$PATH"
 
 git clone https://github.com/rejeep/evm.git "$HOME/.evm"
 evm config path /tmp
-evm install emacs-24.5-travis --use --skip
+evm install emacs-25-pre-travis --use --skip
 
 curl -fsSkL https://raw.github.com/cask/cask/master/go | python
