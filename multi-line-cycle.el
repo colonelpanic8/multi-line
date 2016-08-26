@@ -91,8 +91,8 @@
                                     (plist-put named-respacers name respacer))
                               respacer)
                              (_ respacer-spec)))))
-    (multi-line-cycle-respacer :respacers respacers
-                               :named-respacers named-respacers)))
+    (make-instance multi-line-cycle-respacer :respacers respacers
+                   :named-respacers named-respacers)))
 
 (provide 'multi-line-cycle)
 ;;; multi-line-cycle.el ends here

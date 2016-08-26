@@ -129,17 +129,6 @@
 (defmethod multi-line-get-fill-column ((_r multi-line-fill-column-respacer))
   fill-column)
 
-(defclass multi-line-removing-respacer nil
-  ((skip-indices :initarg :skip-indices :initform '(0 -1))
-   (respacer :initarg :respacer)))
-
-(defmethod multi-line-respace ((respacer multi-line-removing-respacer)
-                               candidates &optional context)
-  (multi-line-respace
-   (oref respacer respacer)
-   (multi-line-remove-at-indices (oref respacer skip-indices) candidates)
-   context))
-
 (defclass multi-line-selecting-respacer nil
   ((indices-to-respacer :initarg :indices-to-respacer)
    (default :initarg :default :initform nil)))

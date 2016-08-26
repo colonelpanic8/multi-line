@@ -60,7 +60,7 @@ execute FORMS before respacing.  FORMS can use the variables index
 and candidates which will be appropriately populated by the
 executor."
   `(defun ,name (decorated-respacer)
-     (multi-line-each-decorator
+     (make-instance multi-line-each-decorator
       :respacer decorated-respacer
       :decorator (lambda (respacer index candidates)
                    ,@forms
@@ -72,7 +72,7 @@ execute FORMS after respacing.  FORMS can use the variables index
 and candidates which will be appropriately populated by the
 executor."
   `(defun ,name (respacer)
-     (multi-line-each-decorator
+     (make-instance multi-line-each-decorator
       :respacer respacer
       :decorator (lambda (respacer index candidates)
                    (multi-line-respace-one respacer index candidates)
@@ -94,10 +94,11 @@ by the executor."
 (multi-line-post-all-decorator multi-line-trailing-comma-respacer
                                (multi-line-add-remove-or-leave-final-comma))
 
-(multi-line-post-all-decorator multi-line-reindenting-respacer
-                               (shut-up
-                                 (indent-region (multi-line-candidate-position (car candidates))
-                                                (multi-line-candidate-position (nth index candidates)))))
+(multi-line-post-all-decorator
+  multi-line-reindenting-respacer
+  (shut-up
+    (indent-region (multi-line-candidate-position (car candidates))
+                   (multi-line-candidate-position (nth index candidates)))))
 
 (multi-line-compose multi-line-clearing-reindenting-respacer
                     'multi-line-reindenting-respacer

@@ -46,8 +46,20 @@
   (multi-line-clearing-reindenting-respacer
    (multi-line-never-newline)))
 
+(defvar multi-line-always-newline-respacer
+  (make-instance multi-line-always-newline))
+
+(defvar multi-line-force-first-and-last-respacer
+  (make-instance
+   multi-line-selecting-respacer
+   :indices-to-respacer (list
+                         (cons (list 0 -1)
+                               multi-line-always-newline-respacer))
+   :default (make-instance multi-line-fill-column-respacer)))
+
 (defvar multi-line-skip-first-and-last-respacer
-  (multi-line-removing-respacer :respacer (make-instance multi-line-always-newline)))
+  (make-instance multi-line-fill-column-respacer
+                 :first-index 1 :final-index -2))
 
 (cl-defun multi-line-respacers-with-single-line
     (respacers
@@ -61,17 +73,13 @@
 
 (defvar multi-line-skip-fill-respacer
   (make-instance multi-line-fill-column-respacer
-   :first-index 1 :final-index -2))
+                 :first-index 1 :final-index -2))
 
 (defvar multi-line-default-respacer-list
   (mapcar 'multi-line-clearing-reindenting-respacer
-          (let ((always-newline (make-instance multi-line-always-newline)))
-            (list (multi-line-selecting-respacer
-                   :indices-to-respacer (list (cons (list 0 -1) always-newline))
-                   :default (make-instance multi-line-fill-column-respacer))
-                  always-newline
-                  (make-instance multi-line-fill-column-respacer
-                   :first-index 1 :final-index -2)))))
+          (list multi-line-force-first-and-last-respacer
+                multi-line-always-newline-respacer
+                multi-line-skip-first-and-last-respacer)))
 
 (defvar multi-line-default-respacer
   (multi-line-respacers-with-single-line multi-line-default-respacer-list))
@@ -139,15 +147,15 @@
                                  multi-line-skip-fill-respacer)))
 
 (defvar multi-line-lisp-strategy
-  (multi-line-strategy
-   :find (multi-line-forward-sexp-find-strategy
-          :split-regex "[[:space:]\n]+"
-          :done-regex "[[:space:]]*)"
-          :split-advance-fn 'multi-line-lisp-advance-fn)
+  (make-instance multi-line-strategy
+   :find (make-instance multi-line-forward-sexp-find-strategy
+                        :split-regex "[[:space:]\n]+"
+                        :done-regex "[[:space:]]*)"
+                        :split-advance-fn 'multi-line-lisp-advance-fn)
    :respace multi-line-lisp-respacer) t)
 
 (defvar multi-line-add-trailing-comma-strategy
-  (multi-line-strategy
+  (make-instance multi-line-strategy
    :respace (multi-line-respacers-with-single-line
              (mapcar 'multi-line-trailing-comma-respacer
                      multi-line-default-respacer-list)
@@ -160,8 +168,9 @@
 (multi-line-defhook emacs-lisp multi-line-lisp-strategy t)
 
 (multi-line-defhook clojure
-  (multi-line-strategy
-   :find (multi-line-forward-sexp-find-strategy
+  (make-instance multi-line-strategy
+   :find (make-instance
+          multi-line-forward-sexp-find-strategy
           :split-regex "[[:space:]\n]+"
           :done-regex "[[:space:]]*)]}"
           :split-advance-fn 'multi-line-lisp-advance-fn)
