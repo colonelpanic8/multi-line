@@ -11,7 +11,7 @@ array and map literals and more. It relies on functions that are
 defined on a per major mode basis wherever it can so that it operates
 correctly across many different programming languages.
 
-* Officially Supported Languages
+* Supported Languages
 The following languages are officially supported by multi-line
 - C/C++
 - clojure
@@ -39,6 +39,15 @@ so.
 (require 'multi-line)
 (global-set-key (kbd "C-c d") 'multi-line)
 #+END_SRC
+* Usage
+Execute the ~multi-line~ command (with M-x or a keybinding) inside the body of
+the expression you wish to multi-line, as show in the demo above. Invoking
+multi-line multiple times on the same definition will cycle between the
+different respacing styles that are configured for the current buffer.
+
+When invoked with a prefix argument (~C-u~), multi-line will "single-line" the
+expression at point, removing all new lines and replacing them with spaces (or
+the character configured for single lining).
 * Configuration
 multi-line can be configured to behave differently depending on the major mode
 of the current-buffer. The behavior of multi-line is described with a
