@@ -1,6 +1,4 @@
 language: emacs-lisp
-env:
-  - EMACS=emacs24
 before_install:
   - source travis-evm-cask.sh
 install:
