@@ -153,7 +153,7 @@
                         :done-regex "[[:space:]]*)"
                         :split-advance-fn 'multi-line-lisp-advance-fn)
    :enter (make-instance multi-line-up-list-enter-strategy
-                         :skip-chars "`'")
+                         :skip-chars "`',@")
    :respace multi-line-lisp-respacer) t)
 
 (defvar multi-line-add-trailing-comma-strategy
@@ -177,7 +177,7 @@
           :done-regex "[[:space:]]*)]}"
           :split-advance-fn 'multi-line-lisp-advance-fn)
    :enter (make-instance multi-line-up-list-enter-strategy
-                         :skip-chars "#~`'")
+                         :skip-chars "#~`'@,")
    :respace multi-line-lisp-respacer) t)
 
 ;;;###autoload
