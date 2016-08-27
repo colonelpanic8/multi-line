@@ -101,3 +101,10 @@ func (a *Account) paramsToStateChange(newState ordert.AccountState) *db.AccountS
   - State "TODO"       from              [2015-11-29 Sun 23:59]
   :END:
 * TODO Apply hooks to existing buffers to make the right strategies active
+  :LOGBOOK:
+  - State "TODO"       from "TODO"       [2016-08-27 Sat 12:31]
+  :END:
+* TODO Pairing on : keywords is too aggressive, what if the :keyword is actually an argument
+  :LOGBOOK:
+  - State "TODO"       from              [2016-08-27 Sat 12:31]
+  :END:
