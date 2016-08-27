@@ -124,5 +124,12 @@
                         (afdasffda
                          fdsafdsafdsaf fdsafdsaf fdsafdsafdsafdsa fdsafdsa) a)")
 
+(multi-line-deftest multi-line-test-checks-newlines-if-last-candidate
+"(fdsafkldsfdsafdsafdsaf fdsafdsafdsaf fdsafdsafdsa (afdasffda
+                                                    fdsafdsafdsaf fdsafdsaf fdsafdsafdsafdsa fdsafdsa))"
+"(fdsafkldsfdsafdsafdsaf fdsafdsafdsaf fdsafdsafdsa
+                        (afdasffda
+                         fdsafdsafdsaf fdsafdsaf fdsafdsafdsafdsa fdsafdsa))")
+
 (provide 'multi-line-test)
 ;;; multi-line-test.el ends here

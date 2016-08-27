@@ -93,22 +93,22 @@
          (next-index (+ index 1))
          (final-index (multi-line-final-index respacer candidate-length))
          (next-candidate (nth next-index candidates))
-         (next-candidate-position (multi-line-candidate-position next-candidate)))
+         (next-candidate-position
+          (if next-candidate
+              (multi-line-candidate-position next-candidate)
+            (save-excursion (end-of-line) (point)))))
     (save-excursion
-      (cond (;; This is the last chance to respace, so we need to
-             ;; consider anything else that is on the current line.
-             (equal index final-index)
-             (let ((inhibit-point-motion-hooks t))
-               (end-of-line))
-             (current-column))
-            (;; There is at least one newline in between this marker and the
-             ;; next marker, so we maximize the current end of lines between
-             ;; them.
-             (and next-candidate
-                  (s-contains?
-                   "\n" (buffer-substring (multi-line-candidate-position
-                                           (nth index candidates))
-                                          next-candidate-position)))
+      (cond ((or
+              ;; This is the last chance to respace, so we need to
+              ;; consider anything else that is on the current line.
+              (equal index final-index)
+              ;; There is at least one newline in between this marker and the
+              ;; next marker, so we maximize the end of line columns between
+              ;; them.
+              (s-contains?
+               "\n" (buffer-substring (multi-line-candidate-position
+                                       (nth index candidates))
+                                      next-candidate-position)))
              (cl-loop
               do (let ((inhibit-point-motion-hooks t))
                    (end-of-line))
