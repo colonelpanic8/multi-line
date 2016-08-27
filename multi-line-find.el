@@ -68,5 +68,28 @@
                     collect (make-instance multi-line-candidate)))
          (list (make-instance multi-line-candidate))))
 
+(defclass multi-line-keyword-pairing-finder ()
+  ((child :initarg :child)
+   (keyword-string :initarg :keyword-string :initform ":")))
+
+(defmethod multi-line-find ((strategy multi-line-keyword-pairing-finder)
+                            &optional context)
+  (let ((candidates (multi-line-find (oref strategy child) context))
+        last-was-included last-candidate)
+    (cl-loop for candidate in candidates
+             for include-this =
+             (or
+              (not last-was-included)
+              (progn
+                (goto-char (multi-line-candidate-position last-candidate))
+                (re-search-forward "[^[:space:]]")
+                (backward-char)
+                (not (looking-at (oref strategy keyword-string)))))
+             do (progn
+                  (setq last-was-included include-this)
+                  (setq last-candidate candidate))
+             when include-this
+             collect candidate)))
+
 (provide 'multi-line-find)
 ;;; multi-line-find.el ends here

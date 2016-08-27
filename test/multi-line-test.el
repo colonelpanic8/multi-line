@@ -90,22 +90,29 @@
 
 (multi-line-deftest multi-line-test-basic-python
 "function(nested(fdasfdsaf, fdasfdsaf, fdasfdsaf, fdasfdsa), other, next, another_nested_call(more, cool, quite))"
-                    (list
-"function(
+(list
+ "function(
     nested(fdasfdsaf, fdasfdsaf, fdasfdsaf, fdasfdsa), other, next,
     another_nested_call(more, cool, quite),
 )"
-"function(
+ "function(
     nested(fdasfdsaf, fdasfdsaf, fdasfdsaf, fdasfdsa),
     other,
     next,
     another_nested_call(more, cool, quite),
 )"
-"function(nested(fdasfdsaf, fdasfdsaf, fdasfdsaf, fdasfdsa), other, next,
+ "function(nested(fdasfdsaf, fdasfdsaf, fdasfdsaf, fdasfdsa), other, next,
          another_nested_call(more, cool, quite))"
-"function(nested(fdasfdsaf, fdasfdsaf, fdasfdsaf, fdasfdsa), other, next, another_nested_call(more, cool, quite))")
-                    :setup ((python-mode) (setq fill-column 80)
-                            (search-forward "(") (forward-char)))
+ "function(nested(fdasfdsaf, fdasfdsaf, fdasfdsaf, fdasfdsa), other, next, another_nested_call(more, cool, quite))")
+:setup ((python-mode) (setq fill-column 80)
+        (search-forward "(") (forward-char)))
+
+(multi-line-deftest multi-line-colon-keywords-always-paired
+"(fdsafdsajklfdjsaklf fdasfdsafdsa fdasfdsafdsafdsafdsaf :f fdsafdsafdfdsafsafdsadf :c fdasfdsafdsafdsafdsafdsafdsafdsafdsafdsa)"
+"(fdsafdsajklfdjsaklf fdasfdsafdsa fdasfdsafdsafdsafdsaf
+                     :f fdsafdsafdfdsafsafdsadf
+                     :c fdasfdsafdsafdsafdsafdsafdsafdsafdsafdsa)")
+
 
 (provide 'multi-line-test)
 ;;; multi-line-test.el ends here

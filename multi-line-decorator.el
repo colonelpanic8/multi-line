@@ -94,11 +94,11 @@ by the executor."
 (multi-line-post-all-decorator multi-line-trailing-comma-respacer
   (multi-line-add-remove-or-leave-final-comma))
 
-(multi-line-post-all-decorator
+(multi-line-post-decorator
   multi-line-reindenting-respacer
   (shut-up
     (indent-region (multi-line-candidate-position (car candidates))
-                   (multi-line-candidate-position (nth index candidates)))))
+                   (multi-line-candidate-position (car (last candidates))))))
 
 (multi-line-compose multi-line-clearing-reindenting-respacer
                     'multi-line-reindenting-respacer

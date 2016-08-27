@@ -146,12 +146,18 @@
   (multi-line-default-respacers (multi-line-clearing-reindenting-respacer
                                  multi-line-skip-fill-respacer)))
 
+(defvar multi-line-lisp-find-strategy
+  (make-instance
+   multi-line-keyword-pairing-finder :child
+   (make-instance multi-line-forward-sexp-find-strategy
+                  :split-regex "[[:space:]\n]+"
+                  :done-regex "[[:space:]]*)"
+                  :split-advance-fn 'multi-line-lisp-advance-fn)))
+
 (defvar multi-line-lisp-strategy
-  (make-instance multi-line-strategy
-   :find (make-instance multi-line-forward-sexp-find-strategy
-                        :split-regex "[[:space:]\n]+"
-                        :done-regex "[[:space:]]*)"
-                        :split-advance-fn 'multi-line-lisp-advance-fn)
+  (make-instance
+   multi-line-strategy
+   :find multi-line-lisp-find-strategy
    :enter (make-instance multi-line-up-list-enter-strategy
                          :skip-chars "`',@")
    :respace multi-line-lisp-respacer) t)
@@ -169,13 +175,18 @@
 (multi-line-defhook lisp multi-line-lisp-strategy t)
 (multi-line-defhook emacs-lisp multi-line-lisp-strategy t)
 
+(defvar multi-line-clojure-find-strategy
+  (make-instance
+   multi-line-keyword-pairing-finder :child
+   (make-instance multi-line-forward-sexp-find-strategy
+                  :split-regex "[[:space:]\n]+"
+                  :done-regex "[[:space:]]*)]}"
+                  :split-advance-fn 'multi-line-lisp-advance-fn)))
+
 (multi-line-defhook clojure
-  (make-instance multi-line-strategy
-   :find (make-instance
-          multi-line-forward-sexp-find-strategy
-          :split-regex "[[:space:]\n]+"
-          :done-regex "[[:space:]]*)]}"
-          :split-advance-fn 'multi-line-lisp-advance-fn)
+  (make-instance
+   multi-line-strategy
+   :find multi-line-clojure-find-strategy
    :enter (make-instance multi-line-up-list-enter-strategy
                          :skip-chars "#~`'@,")
    :respace multi-line-lisp-respacer) t)
