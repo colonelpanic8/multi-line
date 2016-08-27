@@ -3,8 +3,9 @@
   - State "DONE"       from "TODO"       [2016-08-24 Wed 16:24]
   - State "TODO"       from              [2016-08-22 Mon 15:50]
   :END:
-* TODO Handle forced grouping of grouped multi-line targets as with keywords in lisp
+* DONE Handle forced grouping of grouped multi-line targets as with keywords in lisp
   :LOGBOOK:
+  - State "DONE"       from "TODO"       [2016-08-26 Fri 23:55]
   - State "TODO"       from              [2016-08-22 Mon 15:51]
   :END:
 #+BEGIN_SRC emacs-lisp
@@ -91,10 +92,11 @@ func (a *Account) paramsToStateChange(newState ordert.AccountState) *db.AccountS
   :LOGBOOK:
   - State "TODO"       from              [2015-11-23 Mon 13:03]
   :END:
-* TODO ruby-map literals
+* DONE ruby-map literals
   :PROPERTIES:
   :CREATED:  [2015-11-29 Sun 23:59]
   :END:
   :LOGBOOK:
+  - State "DONE"       from "TODO"       [2016-08-26 Fri 23:56]
   - State "TODO"       from              [2015-11-29 Sun 23:59]
   :END:
