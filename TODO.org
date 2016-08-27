@@ -100,3 +100,4 @@ func (a *Account) paramsToStateChange(newState ordert.AccountState) *db.AccountS
   - State "DONE"       from "TODO"       [2016-08-26 Fri 23:56]
   - State "TODO"       from              [2015-11-29 Sun 23:59]
   :END:
+* TODO Apply hooks to existing buffers to make the right strategies active
