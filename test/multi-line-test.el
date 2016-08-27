@@ -117,6 +117,12 @@
                      :f fdsafdsafdfdsafsafdsadf
                      :c fdasfdsafdsafdsafdsafdsafdsafdsafdsafdsa)")
 
+(multi-line-deftest multi-line-test-checks-all-newlines-between-candidates
+"(fdsafkldsfdsafdsafdsaf fdsafdsafdsaf fdsafdsafdsa (afdasffda
+                                                    fdsafdsafdsaf fdsafdsaf fdsafdsafdsafdsa fdsafdsa) a)"
+"(fdsafkldsfdsafdsafdsaf fdsafdsafdsaf fdsafdsafdsa
+                        (afdasffda
+                         fdsafdsafdsaf fdsafdsaf fdsafdsafdsafdsa fdsafdsa) a)")
 
 (provide 'multi-line-test)
 ;;; multi-line-test.el ends here

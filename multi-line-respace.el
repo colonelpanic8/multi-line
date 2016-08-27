@@ -84,30 +84,41 @@
 
 (defmethod multi-line-check-fill-column ((respacer multi-line-fill-respacer)
                                          index candidates)
+  (> (multi-line-min-max-column-if-no-newline respacer index candidates)
+     (multi-line-get-fill-column respacer)))
+
+(defmethod multi-line-min-max-column-if-no-newline
+  ((respacer multi-line-fill-respacer) index candidates)
   (let* ((candidate-length (length candidates))
          (next-index (+ index 1))
          (final-index (multi-line-final-index respacer candidate-length))
          (next-candidate (nth next-index candidates))
-         (next-candidate-column
-          (save-excursion
-            (cond ((or
-                    ;; This is the last chance to respace, so we need to
-                    ;; consider anything else that is on the current line.
-                    (equal index final-index)
-                    ;; There is a newline in between this marker and the next
-                    ;; marker, so end-of-line is the relevant consideration.
-                    (let ((this-marker (oref (nth index candidates) marker))
-                          (next-marker (oref next-candidate marker)))
-                      (multi-line-is-newline-between-markers this-marker
-                                                             next-marker)))
-                   (let ((inhibit-point-motion-hooks t))
-                     (end-of-line)))
-                  ((<= next-index final-index)
-                   ;; We look at the next index because if IT exceeds the
-                   ;; fill-column, we know we need to add a newline now.
-                   (goto-char (multi-line-candidate-position next-candidate))))
-            (current-column))))
-    (> next-candidate-column (multi-line-get-fill-column respacer))))
+         (next-candidate-position (multi-line-candidate-position next-candidate)))
+    (save-excursion
+      (cond (;; This is the last chance to respace, so we need to
+             ;; consider anything else that is on the current line.
+             (equal index final-index)
+             (let ((inhibit-point-motion-hooks t))
+               (end-of-line))
+             (current-column))
+            (;; There is at least one newline in between this marker and the
+             ;; next marker, so we maximize the current end of lines between
+             ;; them.
+             (and next-candidate
+                  (s-contains?
+                   "\n" (buffer-substring (multi-line-candidate-position
+                                           (nth index candidates))
+                                          next-candidate-position)))
+             (cl-loop
+              do (let ((inhibit-point-motion-hooks t))
+                   (end-of-line))
+              maximize (current-column)
+              do (forward-line)
+              while (< (point) next-candidate-position)))
+            (;; We look at the column of the next candidate
+             next-candidate
+             (goto-char (multi-line-candidate-position next-candidate))
+             (current-column))))))
 
 (defmethod multi-line-respace-one ((respacer multi-line-fill-respacer)
                                    index candidates)
