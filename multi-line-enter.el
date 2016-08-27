@@ -25,11 +25,15 @@
 (require 'eieio)
 (require 'multi-line-shared)
 
-(defclass multi-line-up-list-enter-strategy () nil)
+(defclass multi-line-up-list-enter-strategy ()
+  ((skip-chars :initarg :skip-chars :initform nil)))
 
-(defmethod multi-line-enter ((_enter multi-line-up-list-enter-strategy)
+(defmethod multi-line-enter ((enter multi-line-up-list-enter-strategy)
                              &optional _context)
   (multi-line-up-list-back)
+  (when (oref enter skip-chars)
+      (while (looking-at (format "[%s]" (oref enter skip-chars)))
+    (forward-char)))
   (forward-char))
 
 (provide 'multi-line-enter)

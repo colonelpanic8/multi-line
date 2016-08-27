@@ -54,6 +54,21 @@
 "(a bbbbbbbbbbbbbbbbbb ccccccccccccccccccccc
    ddddddddeeeeeeeeekkkkkkkkkkffffffffff gggggggggggg)")
 
+(multi-line-deftest multi-line-test-handles-quoted-lists
+"(list '((emacs-lisp-mode) (more-fun-stuff) (setq fill-column 80) (setq indent-tabs-mode nil) (forward-char)))"
+"(list '((emacs-lisp-mode) (more-fun-stuff) (setq fill-column 80)
+        (setq indent-tabs-mode nil) (forward-char)))"
+:setup ((emacs-lisp-mode) (setq fill-column 80)
+        (setq indent-tabs-mode nil) (search-forward "(more-fun")
+        (up-list)))
+
+(multi-line-deftest multi-line-test-handles-quasi-quoted-lists
+"(list `((emacs-lisp-mode) (more-fun-stuff) (setq fill-column 80) (setq indent-tabs-mode nil) (forward-char)))"
+"(list `((emacs-lisp-mode) (more-fun-stuff) (setq fill-column 80)
+        (setq indent-tabs-mode nil) (forward-char)))"
+:setup ((emacs-lisp-mode) (setq fill-column 80)
+        (setq indent-tabs-mode nil) (search-forward "(more-fun")
+        (up-list)))
 (multi-line-deftest multi-line-test-basic-python
 "function(nested(fdasfdsaf, fdasfdsaf, fdasfdsaf, fdasfdsa), other, next, another_nested_call(more, cool, quite))"
                     (list
