@@ -29,14 +29,13 @@
 (put 'multi-line-deftest 'lisp-indent-function '(lambda (&rest args) 0))
 
 (cl-defmacro multi-line-deftest
-    (name initial-text expected-text &key strategy ert-forms
-          (setup '((emacs-lisp-mode) (setq fill-column 80)
-                   (setq indent-tabs-mode nil) (forward-char))))
+    (name initial-text expected-text &key strategy tags setup)
   (let ((expected-texts (if (listp expected-text)
-                           expected-text
-                          `(list ,expected-text))))
-    `(ert-deftest ,name ()
-       ,@ert-forms
+                            expected-text
+                          `(list ,expected-text)))
+        (test-name (intern (concat "multi-line-" (symbol-name name)))))
+    `(ert-deftest ,test-name ()
+       :tags ,tags
        (with-temp-buffer
          (insert ,initial-text)
          ,(when strategy
@@ -48,88 +47,6 @@
                   (should
                    (equal expected-text (buffer-string)))))
        t)))
-
-(multi-line-deftest multi-line-test-basic-elisp
-"(a bbbbbbbbbbbbbbbbbb ccccccccccccccccccccc ddddddddeeeeeeeeekkkkkkkkkkffffffffff gggggggggggg)"
-"(a bbbbbbbbbbbbbbbbbb ccccccccccccccccccccc
-   ddddddddeeeeeeeeekkkkkkkkkkffffffffff gggggggggggg)")
-
-(multi-line-deftest multi-line-test-handles-quoted-lists
-"(list '((emacs-lisp-mode) (more-fun-stuff) (setq fill-column 80) (setq indent-tabs-mode nil) (forward-char)))"
-"(list '((emacs-lisp-mode) (more-fun-stuff) (setq fill-column 80)
-        (setq indent-tabs-mode nil) (forward-char)))"
-:setup ((emacs-lisp-mode) (setq fill-column 80)
-        (setq indent-tabs-mode nil) (search-forward "(more-fun")
-        (up-list)))
-
-(multi-line-deftest multi-line-test-handles-quasi-quoted-lists
-"(list `((emacs-lisp-mode) (more-fun-stuff) (setq fill-column 80) (setq indent-tabs-mode nil) (forward-char)))"
-"(list `((emacs-lisp-mode) (more-fun-stuff) (setq fill-column 80)
-        (setq indent-tabs-mode nil) (forward-char)))"
-:setup ((emacs-lisp-mode) (setq fill-column 80)
-        (setq indent-tabs-mode nil) (search-forward "(more-fun")
-        (up-list)))
-
-(multi-line-deftest multi-line-test-handles-quoted-lists
-"(list '((emacs-lisp-mode) (more-fun-stuff) (setq fill-column 80) (setq indent-tabs-mode nil) (forward-char)))"
-"(list '((emacs-lisp-mode) (more-fun-stuff) (setq fill-column 80)
-        (setq indent-tabs-mode nil) (forward-char)))"
-:setup ((emacs-lisp-mode) (setq fill-column 80)
-        (setq indent-tabs-mode nil) (search-forward "(more-fun")
-        (up-list)))
-
-(multi-line-deftest multi-line-test-handles-unquote
-"`(,(list 'afdsafdsafdsfafdsafdsafd 'afdsafdsafdasfdsafs 'afdasfdsafdsafdafdsafdsafdsafdsa))"
-"`(,(list 'afdsafdsafdsfafdsafdsafd 'afdsafdsafdasfdsafs
-         'afdasfdsafdsafdafdsafdsafdsafdsa))"
-:setup ((emacs-lisp-mode) (setq fill-column 80)
-        (setq indent-tabs-mode nil) (search-forward "fdsafdsafdsfafdsafdsafd")))
-
-(multi-line-deftest multi-line-test-handles-splice
-"`(,@(list 'afdsafdsafdsfafdsafdsafd 'afdsafdsafdasfdsafs 'afdasfdsafdsafdafdsafdsafdsafdsa))"
-"`(,@(list 'afdsafdsafdsfafdsafdsafd 'afdsafdsafdasfdsafs
-          'afdasfdsafdsafdafdsafdsafdsafdsa))"
-:setup ((emacs-lisp-mode) (setq fill-column 80)
-        (setq indent-tabs-mode nil) (search-forward "fdsafdsafdsfafdsafdsafd")))
-
-(multi-line-deftest multi-line-test-basic-python
-"function(nested(fdasfdsaf, fdasfdsaf, fdasfdsaf, fdasfdsa), other, next, another_nested_call(more, cool, quite))"
-(list
- "function(
-    nested(fdasfdsaf, fdasfdsaf, fdasfdsaf, fdasfdsa), other, next,
-    another_nested_call(more, cool, quite),
-)"
- "function(
-    nested(fdasfdsaf, fdasfdsaf, fdasfdsaf, fdasfdsa),
-    other,
-    next,
-    another_nested_call(more, cool, quite),
-)"
- "function(nested(fdasfdsaf, fdasfdsaf, fdasfdsaf, fdasfdsa), other, next,
-         another_nested_call(more, cool, quite))"
- "function(nested(fdasfdsaf, fdasfdsaf, fdasfdsaf, fdasfdsa), other, next, another_nested_call(more, cool, quite))")
-:setup ((python-mode) (setq fill-column 80)
-        (search-forward "(") (forward-char)))
-
-(multi-line-deftest multi-line-colon-keywords-always-paired
-"(fdsafdsajklfdjsaklf fdasfdsafdsa fdasfdsafdsafdsafdsaf :f fdsafdsafdfdsafsafdsadf :c fdasfdsafdsafdsafdsafdsafdsafdsafdsafdsa)"
-"(fdsafdsajklfdjsaklf fdasfdsafdsa fdasfdsafdsafdsafdsaf
-                     :f fdsafdsafdfdsafsafdsadf
-                     :c fdasfdsafdsafdsafdsafdsafdsafdsafdsafdsa)")
-
-(multi-line-deftest multi-line-test-checks-all-newlines-between-candidates
-"(fdsafkldsfdsafdsafdsaf fdsafdsafdsaf fdsafdsafdsa (afdasffda
-                                                    fdsafdsafdsaf fdsafdsaf fdsafdsafdsafdsa fdsafdsa) a)"
-"(fdsafkldsfdsafdsafdsaf fdsafdsafdsaf fdsafdsafdsa
-                        (afdasffda
-                         fdsafdsafdsaf fdsafdsaf fdsafdsafdsafdsa fdsafdsa) a)")
-
-(multi-line-deftest multi-line-test-checks-newlines-if-last-candidate
-"(fdsafkldsfdsafdsafdsaf fdsafdsafdsaf fdsafdsafdsa (afdasffda
-                                                    fdsafdsafdsaf fdsafdsaf fdsafdsafdsafdsa fdsafdsa))"
-"(fdsafkldsfdsafdsafdsaf fdsafdsafdsaf fdsafdsafdsa
-                        (afdasffda
-                         fdsafdsafdsaf fdsafdsaf fdsafdsafdsafdsa fdsafdsa))")
 
 (provide 'multi-line-test)
 ;;; multi-line-test.el ends here
