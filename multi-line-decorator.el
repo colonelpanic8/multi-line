@@ -61,10 +61,10 @@ and candidates which will be appropriately populated by the
 executor."
   `(defun ,name (decorated-respacer)
      (make-instance multi-line-each-decorator
-      :respacer decorated-respacer
-      :decorator (lambda (respacer index candidates)
-                   ,@forms
-                   (multi-line-respace-one respacer index candidates)))))
+                    :respacer decorated-respacer
+                    :decorator (lambda (respacer index candidates)
+                                 ,@forms
+                                 (multi-line-respace-one respacer index candidates)))))
 
 (defmacro multi-line-post-decorator (name &rest forms)
   "Build a constructor with name NAME that builds respacers that
@@ -73,10 +73,10 @@ and candidates which will be appropriately populated by the
 executor."
   `(defun ,name (respacer)
      (make-instance multi-line-each-decorator
-      :respacer respacer
-      :decorator (lambda (respacer index candidates)
-                   (multi-line-respace-one respacer index candidates)
-                   ,@forms))))
+                    :respacer respacer
+                    :decorator (lambda (respacer index candidates)
+                                 (multi-line-respace-one respacer index candidates)
+                                 ,@forms))))
 
 (defmacro multi-line-post-all-decorator (name &rest forms)
   "Build a constructor with name NAME that builds respacers that
@@ -84,15 +84,15 @@ execute FORMS after respacing all splits.  FORMS can use the
 variables index and candidates which will be appropriately populated
 by the executor."
   `(multi-line-post-decorator
-    ,name (when (equal index (- (length candidates) 1))
-            (goto-char (multi-line-candidate-position (car (last candidates))))
-            ,@forms)))
+     ,name (when (equal index (- (length candidates) 1))
+             (goto-char (multi-line-candidate-position (car (last candidates))))
+             ,@forms)))
 
 (multi-line-pre-decorator multi-line-space-clearing-respacer
-                          (multi-line-clear-whitespace-at-point))
+  (multi-line-clear-whitespace-at-point))
 
 (multi-line-post-all-decorator multi-line-trailing-comma-respacer
-                               (multi-line-add-remove-or-leave-final-comma))
+  (multi-line-add-remove-or-leave-final-comma))
 
 (multi-line-post-all-decorator
   multi-line-reindenting-respacer
