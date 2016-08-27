@@ -26,9 +26,12 @@
 
 (require 'multi-line)
 
+(put 'multi-line-deftest 'lisp-indent-function '(lambda (&rest args) 0))
+
 (cl-defmacro multi-line-deftest
     (name initial-text expected-text &key strategy ert-forms
-          (setup '((emacs-lisp-mode) (setq fill-column 70) (forward-char))))
+          (setup '((emacs-lisp-mode) (setq fill-column 80)
+                   (setq indent-tabs-mode nil) (forward-char))))
   (let ((expected-texts (if (listp expected-text)
                            expected-text
                           `(list ,expected-text))))
@@ -47,9 +50,9 @@
        t)))
 
 (multi-line-deftest multi-line-test-basic-elisp
-"(a bbbbbbbbbbbbbbbbbb ccccccccccccccccccccc ddddddddeeeeeeeeekkkkkkkkkk ffffffffff gggggggggggg)"
+"(a bbbbbbbbbbbbbbbbbb ccccccccccccccccccccc ddddddddeeeeeeeeekkkkkkkkkkffffffffff gggggggggggg)"
 "(a bbbbbbbbbbbbbbbbbb ccccccccccccccccccccc
-   ddddddddeeeeeeeeekkkkkkkkkk ffffffffff gggggggggggg)")
+   ddddddddeeeeeeeeekkkkkkkkkkffffffffff gggggggggggg)")
 
 (multi-line-deftest multi-line-test-basic-python
 "function(nested(fdasfdsaf, fdasfdsaf, fdasfdsaf, fdasfdsa), other, next, another_nested_call(more, cool, quite))"
