@@ -81,12 +81,16 @@
 (multi-line-deftest multi-line-test-handles-unquote
 "`(,(list 'afdsafdsafdsfafdsafdsafd 'afdsafdsafdasfdsafs 'afdasfdsafdsafdafdsafdsafdsafdsa))"
 "`(,(list 'afdsafdsafdsfafdsafdsafd 'afdsafdsafdasfdsafs
-         'afdasfdsafdsafdafdsafdsafdsafdsa))")
+         'afdasfdsafdsafdafdsafdsafdsafdsa))"
+:setup ((emacs-lisp-mode) (setq fill-column 80)
+        (setq indent-tabs-mode nil) (search-forward "fdsafdsafdsfafdsafdsafd")))
 
 (multi-line-deftest multi-line-test-handles-splice
 "`(,@(list 'afdsafdsafdsfafdsafdsafd 'afdsafdsafdasfdsafs 'afdasfdsafdsafdafdsafdsafdsafdsa))"
 "`(,@(list 'afdsafdsafdsfafdsafdsafd 'afdsafdsafdasfdsafs
-          'afdasfdsafdsafdafdsafdsafdsafdsa))")
+          'afdasfdsafdsafdafdsafdsafdsafdsa))"
+:setup ((emacs-lisp-mode) (setq fill-column 80)
+        (setq indent-tabs-mode nil) (search-forward "fdsafdsafdsfafdsafdsafd")))
 
 (multi-line-deftest multi-line-test-basic-python
 "function(nested(fdasfdsaf, fdasfdsaf, fdasfdsaf, fdasfdsa), other, next, another_nested_call(more, cool, quite))"
