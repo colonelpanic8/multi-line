@@ -111,7 +111,14 @@ character classes that will be used to find whitespace."
 (defun multi-line-actual-indices (skip-indices list)
   (let ((list-length (length list)))
     (cl-loop for index in skip-indices
-           collect (mod index list-length))))
+             collect (mod index list-length))))
+
+(defun multi-line-interpret-prefix-as-number (prefix)
+  (cond
+   ((numberp prefix) prefix)
+   ((and (-non-nil prefix) (listp prefix))
+    (truncate (log (car prefix) 4)))
+   (0)))
 
 (provide 'multi-line-shared)
 ;;; multi-line-shared.el ends here
