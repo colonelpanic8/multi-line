@@ -60,7 +60,7 @@ execute FORMS before respacing.  FORMS can use the variables index
 and candidates which will be appropriately populated by the
 executor."
   `(defun ,name (decorated-respacer)
-     (make-instance multi-line-each-decorator
+     (make-instance 'multi-line-each-decorator
                     :respacer decorated-respacer
                     :decorator (lambda (respacer index candidates)
                                  ,@forms
@@ -72,7 +72,7 @@ execute FORMS after respacing.  FORMS can use the variables index
 and candidates which will be appropriately populated by the
 executor."
   `(defun ,name (respacer)
-     (make-instance multi-line-each-decorator
+     (make-instance 'multi-line-each-decorator
                     :respacer respacer
                     :decorator (lambda (respacer index candidates)
                                  (multi-line-respace-one respacer index candidates)

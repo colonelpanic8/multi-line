@@ -46,18 +46,18 @@
    (multi-line-never-newline)))
 
 (defvar multi-line-always-newline-respacer
-  (make-instance multi-line-always-newline))
+  (make-instance 'multi-line-always-newline))
 
 (defvar multi-line-force-first-and-last-respacer
   (make-instance
-   multi-line-selecting-respacer
+   'multi-line-selecting-respacer
    :indices-to-respacer (list
                          (cons (list 0 -1)
                                multi-line-always-newline-respacer))
-   :default (make-instance multi-line-fill-column-respacer)))
+   :default (make-instance 'multi-line-fill-column-respacer)))
 
 (defvar multi-line-skip-first-and-last-respacer
-  (make-instance multi-line-fill-column-respacer
+  (make-instance 'multi-line-fill-column-respacer
                  :first-index 1 :final-index -2))
 
 (cl-defun multi-line-respacers-with-single-line
@@ -71,7 +71,7 @@
   (multi-line-respacers-with-single-line respacers))
 
 (defvar multi-line-skip-fill-respacer
-  (make-instance multi-line-fill-column-respacer
+  (make-instance 'multi-line-fill-column-respacer
                  :first-index 1 :final-index -2))
 
 (defvar multi-line-default-respacer-list
@@ -110,7 +110,7 @@
       (multi-line-respace (oref strategy respace) candidates context))))
 
 (defvar-local multi-line-current-strategy
-  (make-instance multi-line-strategy)
+  (make-instance 'multi-line-strategy)
   "The multi-line strategy that will be used by the command `multi-line'.")
 
 (defun multi-line-lisp-advance-fn ()
@@ -148,22 +148,22 @@
 
 (defvar multi-line-lisp-find-strategy
   (make-instance
-   multi-line-keyword-pairing-finder :child
-   (make-instance multi-line-forward-sexp-find-strategy
+   'multi-line-keyword-pairing-finder :child
+   (make-instance 'multi-line-forward-sexp-find-strategy
                   :split-regex "[[:space:]\n]+"
                   :done-regex "[[:space:]]*)"
                   :split-advance-fn 'multi-line-lisp-advance-fn)))
 
 (defvar multi-line-lisp-strategy
   (make-instance
-   multi-line-strategy
+   'multi-line-strategy
    :find multi-line-lisp-find-strategy
-   :enter (make-instance multi-line-up-list-enter-strategy
+   :enter (make-instance 'multi-line-up-list-enter-strategy
                          :skip-chars "`',@")
    :respace multi-line-lisp-respacer) t)
 
 (defvar multi-line-add-trailing-comma-strategy
-  (make-instance multi-line-strategy
+  (make-instance 'multi-line-strategy
    :respace (multi-line-respacers-with-single-line
              (mapcar 'multi-line-trailing-comma-respacer
                      multi-line-default-respacer-list)
@@ -177,17 +177,17 @@
 
 (defvar multi-line-clojure-find-strategy
   (make-instance
-   multi-line-keyword-pairing-finder :child
-   (make-instance multi-line-forward-sexp-find-strategy
+   'multi-line-keyword-pairing-finder :child
+   (make-instance 'multi-line-forward-sexp-find-strategy
                   :split-regex "[[:space:]\n]+"
                   :done-regex "[[:space:]]*)]}"
                   :split-advance-fn 'multi-line-lisp-advance-fn)))
 
 (multi-line-defhook clojure
   (make-instance
-   multi-line-strategy
+   'multi-line-strategy
    :find multi-line-clojure-find-strategy
-   :enter (make-instance multi-line-up-list-enter-strategy
+   :enter (make-instance 'multi-line-up-list-enter-strategy
                          :skip-chars "#~`'@,")
    :respace multi-line-lisp-respacer) t)
 

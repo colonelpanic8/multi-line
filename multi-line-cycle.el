@@ -24,6 +24,8 @@
 
 (require 'eieio)
 
+(require 'multi-line-candidate)
+
 ;; This variable is for internal use only
 (defvar multi-line-last-cycler nil)
 
@@ -91,7 +93,7 @@
                                     (plist-put named-respacers name respacer))
                               respacer)
                              (_ respacer-spec)))))
-    (make-instance multi-line-cycle-respacer :respacers respacers
+    (make-instance 'multi-line-cycle-respacer :respacers respacers
                    :named-respacers named-respacers)))
 
 (provide 'multi-line-cycle)

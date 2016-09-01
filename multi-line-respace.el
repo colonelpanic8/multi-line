@@ -25,8 +25,11 @@
 (require 'cl-lib)
 (require 'dash)
 (require 'eieio)
+(require 's)
 
+(require 'multi-line-candidate)
 (require 'multi-line-cycle)
+(require 'multi-line-shared)
 
 (defclass multi-line-respacer () nil)
 
@@ -159,8 +162,8 @@
            finally return (oref respacer default)))
 
 (defun multi-line-never-newline ()
-  (make-instance multi-line-selecting-respacer
-   :default (make-instance multi-line-space)
+  (make-instance 'multi-line-selecting-respacer
+   :default (make-instance 'multi-line-space)
    :indices-to-respacer (list (cons (list 0 -1) nil))))
 
 (provide 'multi-line-respace)
