@@ -25,47 +25,50 @@
 (require 'eieio)
 
 (require 'multi-line-candidate)
+(require 'multi-line-enter)
 (require 'multi-line-shared)
 
 (defclass multi-line-forward-sexp-find-strategy ()
   ((split-regex :initarg :split-regex :initform "[[:space:]]*,")
-   (done-regex :initarg :done-regex :initform "[[:space:]]*[})]")
+   (done-regex :initarg :done-regex :initform "[[:space:]]*[})\]]")
    (split-advance-fn :initarg :split-advance-fn :initform
-                     'multi-line-comma-advance)))
+                     'multi-line-comma-advance)
+   (recursive-enter :initarg :recursive-enter
+                   :initform (make-instance
+                              multi-line-looking-at-enter-strategy))))
 
-(defmethod multi-line-should-stop
+(defmethod multi-line-at-end-of-candidates
   ((strategy multi-line-forward-sexp-find-strategy))
-  (cond
-   ((looking-at (oref strategy done-regex)) :done)
-   ((looking-at (oref strategy split-regex)) :candidate)
-   (t nil)))
+  (or (looking-at (oref strategy done-regex))
+      (condition-case _ignored
+          (save-excursion (forward-sexp) nil)
+        ('scan-error t))))
 
 (defmethod multi-line-find-next
   ((strategy multi-line-forward-sexp-find-strategy) &optional _context)
-  (let (last last-point this-point)
-    (setq this-point (point))
-    (condition-case _ignored
-        (while (and (not (equal this-point last-point))
-                    (not (setq last (multi-line-should-stop strategy))))
-          (forward-sexp)
-          (setq last-point this-point)
-          (setq this-point (point)))
-      ('error (setq last :done)))
-    (when (equal last :candidate)
-      (funcall (oref strategy split-advance-fn)))
-    last))
+  (let (last last-point)
+    (cl-loop
+     until (or (equal this-point last-point)
+               (looking-at (oref strategy split-regex)))
+     do (forward-sexp)
+     finally return (make-instance 'multi-line-candidate)
+     (let
+         ((candidate (make-instance 'multi-line-candidate)))
+       (funcall (oref strategy split-advance-fn))
+       candidate))))
 
 (defmethod multi-line-find ((strategy multi-line-forward-sexp-find-strategy)
                             &optional context)
-  (nconc (list (make-instance multi-line-candidate))
+  (nconc (list (make-instance 'multi-line-candidate))
          (progn
            ;; XXX: This is a hack to make hash literals work in ruby. For some
            ;; reason if you execute forward sexp at a '{' but there is a newline
            ;; immediately following that character it passes over the entire
            ;; hash body.
            (re-search-forward "[^[:space:]\n]") (backward-char)
-           (cl-loop until (equal (multi-line-find-next strategy context) :done)
-                    collect (make-instance multi-line-candidate)))
+           (cl-loop for this-result = (multi-line-find-next strategy context)
+            until (equal this-result :end)
+            collect this-result))
          (list (make-instance multi-line-candidate))))
 
 (defclass multi-line-keyword-pairing-finder ()
