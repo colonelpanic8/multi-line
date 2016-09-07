@@ -41,21 +41,24 @@
   ((strategy multi-line-forward-sexp-find-strategy))
   (or (looking-at (oref strategy done-regex))
       (condition-case _ignored
-          (save-excursion (forward-sexp) nil)
+          (progn (forward-sexp) nil)
         ('scan-error t))))
 
 (defmethod multi-line-find-next
   ((strategy multi-line-forward-sexp-find-strategy) &optional _context)
   (let (last last-point)
     (cl-loop
+     with this-point = (point)
      until (or (equal this-point last-point)
                (looking-at (oref strategy split-regex)))
-     do (forward-sexp)
-     finally return (make-instance 'multi-line-candidate)
-     (let
-         ((candidate (make-instance 'multi-line-candidate)))
-       (funcall (oref strategy split-advance-fn))
-       candidate))))
+     ;; When we are at the end of the candidates simply return the current
+     ;; candidate
+     when (multi-line-at-end-of-candidates strategy)
+     return (make-instance 'multi-line-candidate)
+     do (setq last-point this-point)
+     ;; If we hit one of the terminating conditions, run the split-advance-fn
+     finally do (funcall (oref strategy split-advance-fn))
+     finally return (make-instance 'multi-line-candidate))))
 
 (defmethod multi-line-find ((strategy multi-line-forward-sexp-find-strategy)
                             &optional context)
@@ -66,11 +69,13 @@
            ;; immediately following that character it passes over the entire
            ;; hash body.
            (re-search-forward "[^[:space:]\n]") (backward-char)
-           (cl-loop for this-result = (multi-line-find-next strategy context)
-            until (equal this-result :end)
-            collect this-result))
-         (list (make-instance multi-line-candidate))))
+           (cl-loop until (multi-line-at-end-of-candidates strategy)
+                    collect (multi-line-find-next strategy)))))
 
+;; A finder decorator that removes candidates that follow "keyword" arguments,
+;; so that things like:
+;; :akey "avalue"
+;; are always paired
 (defclass multi-line-keyword-pairing-finder ()
   ((child :initarg :child)
    (keyword-string :initarg :keyword-string :initform ":")))
