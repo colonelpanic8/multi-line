@@ -32,10 +32,7 @@
   ((split-regex :initarg :split-regex :initform "[[:space:]]*,")
    (done-regex :initarg :done-regex :initform "[[:space:]]*[})\]]")
    (split-advance-fn :initarg :split-advance-fn :initform
-                     'multi-line-comma-advance)
-   (recursive-enter :initarg :recursive-enter
-                   :initform (make-instance
-                              multi-line-looking-at-enter-strategy))))
+                     'multi-line-comma-advance)))
 
 (defmethod multi-line-at-end-of-candidates
   ((strategy multi-line-forward-sexp-find-strategy))
@@ -72,9 +69,11 @@
            ;; immediately following that character it passes over the entire
            ;; hash body.
            (re-search-forward "[^[:space:]\n]") (backward-char)
-           (cl-loop until (save-excursion
-                            (multi-line-at-end-of-candidates strategy))
-                    collect (multi-line-find-next strategy context)))))
+           (cl-loop
+            for last-point = this-point
+            for this-point = (point)
+            until (equal this-point last-point)
+            collect (multi-line-find-next strategy context)))))
 
 ;; A finder decorator that removes candidates that follow "keyword" arguments,
 ;; so that things like:

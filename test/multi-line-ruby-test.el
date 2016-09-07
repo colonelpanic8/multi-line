@@ -42,7 +42,7 @@
                          ,@args)))
 
 (multi-line-deftest-ruby test-ruby-hash-literal
-"{:avalue => \"cool\", :greater => \"fun\", :avalue3 => \"cool\", :greaterg => \"fun\"}"
+"{:avalue => \"cool\", :greater => \"fun\", :avalue3 => \"cool\", :greaterg => \"fun\", :more => \"coool real long\",}"
 "{
   :avalue => \"cool\", :greater => \"fun\", :avalue3 => \"cool\", :greaterg => \"fun\",
   :more => \"coool real long\",
