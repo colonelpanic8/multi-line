@@ -17,7 +17,7 @@
 
 ;;; Commentary:
 
-;; Test the behavior of multi-line in emacs-lisp-mode
+;; Test the behavior of multi-line in python-mode
 
 ;;; Code:
 
