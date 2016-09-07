@@ -172,6 +172,8 @@
 
 (multi-line-defhook python multi-line-add-trailing-comma-strategy t)
 (multi-line-defhook go multi-line-add-trailing-comma-strategy t)
+(multi-line-defhook ruby multi-line-add-trailing-comma-strategy t)
+
 (multi-line-defhook lisp multi-line-lisp-strategy t)
 (multi-line-defhook emacs-lisp multi-line-lisp-strategy t)
 
