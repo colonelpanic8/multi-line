@@ -41,8 +41,8 @@
 
 (multi-line-deftest-elisp test-basic-elisp
 "(a bbbbbbbbbbbbbbbbbb ccccccccccccccccccccc ddddddddeeeeeeeeekkkkkkkkkkffffffffff gggggggggggg)"
-"(a bbbbbbbbbbbbbbbbbb ccccccccccccccccccccc
-   ddddddddeeeeeeeeekkkkkkkkkkffffffffff gggggggggggg)")
+"(a bbbbbbbbbbbbbbbbbb ccccccccccccccccccccc ddddddddeeeeeeeeekkkkkkkkkkffffffffff
+   gggggggggggg)")
 
 (multi-line-deftest-elisp test-handles-quoted-lists
 "(list '((emacs-lisp-mode) (more-fun-stuff) (setq fill-column 80) (setq indent-tabs-mode nil) (forward-char)))"

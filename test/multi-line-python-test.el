@@ -17,7 +17,7 @@
 
 ;;; Commentary:
 
-;; Test the behavior of multi-line in emacs-lisp-mode
+;; Test the behavior of multi-line in python-mode
 
 ;;; Code:
 
@@ -27,13 +27,15 @@
 (require 'multi-line)
 (require 'multi-line-test)
 
+(put 'multi-line-deftest-python 'lisp-indent-function '(lambda (&rest args) 0))
+
 (defun multi-line-test-python-setup ()
   (shut-up (python-mode))
   (setq fill-column 80
         indent-tabs-mode nil))
 
-(cl-defmacro multi-line-deftest-python (name initial expected &rest args
-                                            &key tags setup &allow-other-keys)
+(cl-defmacro multi-line-deftest-python
+    (name initial expected &rest args &key tags setup &allow-other-keys)
   (let ((tags (quote (cons 'python tags)))
         (setup (cons '(multi-line-test-python-setup) setup)))
     `(multi-line-deftest ,name ,initial ,expected :tags (quote ,tags) :setup ,setup
@@ -55,6 +57,13 @@
  "function(nested(fdasfdsaf, fdasfdsaf, fdasfdsaf, fdasfdsa), other, next,
          another_nested_call(more, cool, quite))"
  "function(nested(fdasfdsaf, fdasfdsaf, fdasfdsaf, fdasfdsa), other, next, another_nested_call(more, cool, quite))")
+:setup ((search-forward "(") (forward-char)))
+
+(multi-line-deftest-python test-python-one-argument
+"fdsafdsafdsafdsafdsafdsafdsafdsafdsa(fdsafdsafdsafdsafdsafdsafdsafdfdsasdfdsadfdsaddffdsaf)"
+"fdsafdsafdsafdsafdsafdsafdsafdsafdsa(
+    fdsafdsafdsafdsafdsafdsafdsafdfdsasdfdsadfdsaddffdsaf,
+)"
 :setup ((search-forward "(") (forward-char)))
 
 (provide 'multi-line-python-test)
