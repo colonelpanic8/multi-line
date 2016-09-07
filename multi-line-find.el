@@ -41,24 +41,27 @@
   ((strategy multi-line-forward-sexp-find-strategy))
   (or (looking-at (oref strategy done-regex))
       (condition-case _ignored
-          (progn (forward-sexp) nil)
+          (progn (forward-sexp)
+                 ;; If the forward-sexp succeeds, check if we are looking at the
+                 ;; done-regex again.
+                 (looking-at (oref strategy done-regex)))
         ('scan-error t))))
 
 (defmethod multi-line-find-next
   ((strategy multi-line-forward-sexp-find-strategy) &optional _context)
   (let (last last-point)
     (cl-loop
-     with this-point = (point)
-     until (or (equal this-point last-point)
-               (looking-at (oref strategy split-regex)))
-     ;; When we are at the end of the candidates simply return the current
-     ;; candidate
-     when (multi-line-at-end-of-candidates strategy)
-     return (make-instance 'multi-line-candidate)
+     for this-point = (point)
+     until (equal this-point last-point)
      do (setq last-point this-point)
-     ;; If we hit one of the terminating conditions, run the split-advance-fn
-     finally do (funcall (oref strategy split-advance-fn))
-     finally return (make-instance 'multi-line-candidate))))
+     ;; When we are at the end of the candidates simply return the current
+     ;; candidate.
+     when (or (multi-line-at-end-of-candidates strategy)
+              (when (looking-at (oref strategy split-regex))
+                (funcall (oref strategy split-advance-fn))
+                t))
+     return (make-instance 'multi-line-candidate)
+     finally (error "No candidate found"))))
 
 (defmethod multi-line-find ((strategy multi-line-forward-sexp-find-strategy)
                             &optional context)
@@ -69,8 +72,9 @@
            ;; immediately following that character it passes over the entire
            ;; hash body.
            (re-search-forward "[^[:space:]\n]") (backward-char)
-           (cl-loop until (multi-line-at-end-of-candidates strategy)
-                    collect (multi-line-find-next strategy)))))
+           (cl-loop until (save-excursion
+                            (multi-line-at-end-of-candidates strategy))
+                    collect (multi-line-find-next strategy context)))))
 
 ;; A finder decorator that removes candidates that follow "keyword" arguments,
 ;; so that things like:
