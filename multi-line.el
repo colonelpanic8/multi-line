@@ -159,7 +159,7 @@
    :find multi-line-lisp-find-strategy
    :enter (make-instance 'multi-line-up-list-enter-strategy
                          :skip-chars "`',@")
-   :respace multi-line-lisp-respacer) t)
+   :respace multi-line-lisp-respacer))
 
 (defvar multi-line-add-trailing-comma-strategy
   (make-instance 'multi-line-strategy
