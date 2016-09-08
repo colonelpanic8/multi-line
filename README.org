@@ -8,8 +8,9 @@
 #+HTML_HEAD: <script type="text/javascript" src="http://www.pirilampo.org/styles/lib/js/jquery.stickytableheaders.js"></script>
 #+HTML_HEAD: <script type="text/javascript" src="http://www.pirilampo.org/styles/readtheorg/js/readtheorg.js"></script>
 
-[[http://melpa.org/#/multi-line][file:https://melpa.org/packages/multi-line-badge.svg]] [[https://stable.melpa.org/#/multi-line][file:https://stable.melpa.org/packages/multi-line-badge.svg]]
 [[https://travis-ci.org/IvanMalison/multi-line][file:https://travis-ci.org/IvanMalison/multi-line.svg?branch=master]]
+[[http://melpa.org/#/multi-line][file:https://melpa.org/packages/multi-line-badge.svg]]
+[[https://stable.melpa.org/#/multi-line][file:https://stable.melpa.org/packages/multi-line-badge.svg]]
 
 * Demo
 [[https://asciinema.org/a/dwft2l94f75x9l46wmdhbm5lh?t=4][https://asciinema.org/a/dwft2l94f75x9l46wmdhbm5lh.png]]
