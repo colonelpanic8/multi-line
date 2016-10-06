@@ -7,10 +7,9 @@ EMACS = $(shell sh -c 'type -P emacs')
 .PHONY: test compile clean install
 
 .cask:
-	cask install
+	$(CASK) install
 
 $(OBJECTS): .cask
-	$(CASK) install
 	$(CASK) build
 
 compile: $(OBJECTS)
