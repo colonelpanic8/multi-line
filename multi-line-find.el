@@ -46,7 +46,7 @@
 
 (defmethod multi-line-find-next
   ((strategy multi-line-forward-sexp-find-strategy) &optional _context)
-  (let (last last-point)
+  (let (last-point)
     (cl-loop
      for this-point = (point)
      until (equal this-point last-point)
