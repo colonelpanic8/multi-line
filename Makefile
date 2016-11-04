@@ -14,6 +14,8 @@ $(OBJECTS): .cask
 
 compile: $(OBJECTS)
 
+install: compile
+
 clean-elc:
 	rm -f $(OBJECTS)
 
