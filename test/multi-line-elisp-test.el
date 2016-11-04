@@ -91,14 +91,16 @@
                          fdsafdsafdsaf fdsafdsaf fdsafdsafdsafdsa fdsafdsa))")
 
 (multi-line-deftest-elisp test-find-index-multi-lining
-"(cl-defun tile-get-next-strategy
+"
+(cl-defun tile-get-next-strategy
     (&optional (current-strategy (or tile-current-strategy
                                      (car (last tile-strategies)))))
   (let ((current-index (--find-index (equal current-strategy it) tile-strategies)))
     (if current-index
         (nth (mod (1+ current-index) (length tile-strategies)) tile-strategies)
       (car tile-strategies))))"
-"(cl-defun tile-get-next-strategy
+"
+(cl-defun tile-get-next-strategy
     (&optional (current-strategy (or tile-current-strategy
                                      (car (last tile-strategies)))))
   (let ((current-index (--find-index (equal current-strategy it)
