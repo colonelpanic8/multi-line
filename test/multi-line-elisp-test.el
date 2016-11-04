@@ -36,8 +36,8 @@
                                             &key tags setup &allow-other-keys)
   (let ((tags  (cons 'elisp tags))
         (setup (cons '(multi-line-test-elisp-setup) setup)))
-    `(multi-line-deftest ,name ,initial ,expected :tags (quote ,tags) :setup ,setup
-                         ,@args)))
+    `(multi-line-deftest ,name ,initial ,expected :tags (quote ,tags)
+                         :setup ,setup ,@args)))
 
 (multi-line-deftest-elisp test-basic-elisp
 "(a bbbbbbbbbbbbbbbbbb ccccccccccccccccccccc ddddddddeeeeeeeeekkkkkkkkkkffffffffff gggggggggggg)"
