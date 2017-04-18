@@ -1,6 +1,6 @@
 CASK = cask
 
-SRCS = $(shell find .  -maxdepth 1 -name '*.el')
+SRCS = $(shell find . -maxdepth 1 -name '*.el')
 OBJECTS = $(SRCS:.el=.elc)
 EMACS = $(shell sh -c 'type -P emacs')
 
