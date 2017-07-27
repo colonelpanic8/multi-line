@@ -1,6 +1,7 @@
 language: generic
 env:
   matrix:
+    - EVMVERSION=emacs-git-snapshot
     - EVMVERSION=emacs-25.1-travis
     - EVMVERSION=emacs-24.4-travis
 before_install:
