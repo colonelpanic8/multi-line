@@ -3,7 +3,7 @@
 ;; Copyright (C) 2015-2016 Ivan Malison
 
 ;; Author: Ivan Malison <IvanMalison@gmail.com>
-;; Keywords: multi line length whitespace programming
+;; Keywords: multi line length whitespace programming tools
 ;; URL: https://github.com/IvanMalison/multi-line
 ;; Package-Requires: ((emacs "24") (s "1.9.0") (cl-lib "0.5") (dash "2.12.0") (shut-up "0.3.2"))
 ;; Version: 0.1.4
@@ -42,12 +42,12 @@
 (defun multi-line-highlight-current-candidates ()
   "Highlight the positions at which multi-line will consider adding newlines."
   (interactive)
-  (let ((candidates (save-excursion
-                      (multi-line-candidates multi-line-current-strategy))))
-    (setq multi-line-overlays-to-remove
-          (nconc
-           (cl-loop for candidate in candidates
-                    collect (multi-line-highlight-candidate candidate))))))
+  (let ((candidates
+         (save-excursion
+           (multi-line-candidates multi-line-current-strategy))))
+    (cl-loop for candidate in candidates do
+             (push (multi-line-highlight-candidate candidate)
+                   multi-line-overlays-to-remove))))
 
 (defun multi-line-highlight-candidate (candidate)
   (let* ((position (multi-line-candidate-position candidate))
