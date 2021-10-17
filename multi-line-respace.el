@@ -60,6 +60,29 @@
                                    _index _candidates)
   (newline-and-indent))
 
+(defclass multi-line-selecting-respacer nil
+  ((indices-to-respacer :initarg :indices-to-respacer)
+   (default :initarg :default :initform nil)))
+
+(defmethod multi-line-respace-one ((respacer multi-line-selecting-respacer)
+                                   index candidates)
+  (let ((selected (multi-line-select-respacer respacer index candidates)))
+    (when selected
+      (multi-line-respace-one selected index candidates))))
+
+(defmethod multi-line-select-respacer ((respacer multi-line-selecting-respacer)
+                                       index candidates)
+  (cl-loop for (indices . r) in (oref respacer indices-to-respacer)
+           when
+           (memq index (multi-line-actual-indices indices candidates))
+           return r
+           finally return (oref respacer default)))
+
+(defun multi-line-never-newline ()
+  (make-instance 'multi-line-selecting-respacer
+                 :default (make-instance 'multi-line-space)
+                 :indices-to-respacer (list (cons (list 0 -1) nil))))
+
 (defclass multi-line-fill-respacer (multi-line-respacer)
   ((newline-respacer
     :initarg :newline-respacer
@@ -144,29 +167,6 @@ assuming that no newline is inserted at the current candidate."
 
 (defmethod multi-line-get-fill-column ((_r multi-line-fill-column-respacer))
   fill-column)
-
-(defclass multi-line-selecting-respacer nil
-  ((indices-to-respacer :initarg :indices-to-respacer)
-   (default :initarg :default :initform nil)))
-
-(defmethod multi-line-respace-one ((respacer multi-line-selecting-respacer)
-                                   index candidates)
-  (let ((selected (multi-line-select-respacer respacer index candidates)))
-    (when selected
-      (multi-line-respace-one selected index candidates))))
-
-(defmethod multi-line-select-respacer ((respacer multi-line-selecting-respacer)
-                                       index candidates)
-  (cl-loop for (indices . r) in (oref respacer indices-to-respacer)
-           when
-           (memq index (multi-line-actual-indices indices candidates))
-           return r
-           finally return (oref respacer default)))
-
-(defun multi-line-never-newline ()
-  (make-instance 'multi-line-selecting-respacer
-   :default (make-instance 'multi-line-space)
-   :indices-to-respacer (list (cons (list 0 -1) nil))))
 
 (provide 'multi-line-respace)
 ;;; multi-line-respace.el ends here
