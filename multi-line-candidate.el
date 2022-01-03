@@ -22,13 +22,13 @@
 
 ;;; Code:
 
-(require 'eieio)
+(require 'cl-lib)
 
 (defclass multi-line-candidate ()
   ((marker :initarg :marker :initform (point-marker))
    (original-spacing :initarg :original-spacing :initform nil)))
 
-(defmethod multi-line-candidate-position ((candidate multi-line-candidate))
+(cl-defmethod multi-line-candidate-position ((candidate multi-line-candidate))
   (marker-position (oref candidate marker)))
 
 (provide 'multi-line-candidate)
