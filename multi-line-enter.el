@@ -22,13 +22,13 @@
 
 ;;; Code:
 
-(require 'eieio)
+(require 'cl-lib)
 (require 'multi-line-shared)
 
 (defclass multi-line-up-list-enter-strategy ()
   ((skip-chars :initarg :skip-chars :initform nil)))
 
-(defmethod multi-line-enter ((enter multi-line-up-list-enter-strategy)
+(cl-defmethod multi-line-enter ((enter multi-line-up-list-enter-strategy)
                              &optional _context)
   (multi-line-up-list-back)
   (when (oref enter skip-chars)
@@ -39,10 +39,10 @@
 (defclass multi-line-looking-at-enter-strategy ()
   ((enter-regex :initarg :enter-regex :initform "[[:space]]*[{([]")))
 
-(defmethod multi-line-can-enter ((strategy multi-line-looking-at-enter-strategy))
+(cl-defmethod multi-line-can-enter ((strategy multi-line-looking-at-enter-strategy))
   (looking-at (oref strategy enter-regex)))
 
-(defmethod multi-line-enter ((strategy multi-line-looking-at-enter-strategy))
+(cl-defmethod multi-line-enter ((strategy multi-line-looking-at-enter-strategy))
   (re-search-forward (oref strategy enter-regex)))
 
 (provide 'multi-line-enter)

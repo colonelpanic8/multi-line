@@ -22,7 +22,7 @@
 
 ;;; Code:
 
-(require 'eieio)
+(require 'cl-lib)
 
 (require 'multi-line-candidate)
 (require 'multi-line-enter)
@@ -34,14 +34,14 @@
    (split-advance-fn :initarg :split-advance-fn :initform
                      'multi-line-comma-advance)))
 
-(defmethod multi-line-at-end-of-candidates
+(cl-defmethod multi-line-at-end-of-candidates
   ((strategy multi-line-forward-sexp-find-strategy))
   (or (looking-at (oref strategy done-regex))
       (save-excursion
         ;; Check to see if we get a scan error when trying to move forward
         (condition-case _ignored (forward-sexp) ('scan-error t)))))
 
-(defmethod multi-line-advance
+(cl-defmethod multi-line-advance
   ((strategy multi-line-forward-sexp-find-strategy) &optional _context)
   (cl-loop
    for failed = (condition-case _ignored (forward-sexp)
@@ -52,7 +52,7 @@
               t))
    return nil))
 
-(defmethod multi-line-find ((strategy multi-line-forward-sexp-find-strategy)
+(cl-defmethod multi-line-find ((strategy multi-line-forward-sexp-find-strategy)
                             &optional context)
   (nconc (list (make-instance 'multi-line-candidate))
          (progn
@@ -77,7 +77,7 @@
   ((child :initarg :child)
    (keyword-string :initarg :keyword-string :initform ":")))
 
-(defmethod multi-line-find ((strategy multi-line-keyword-pairing-finder)
+(cl-defmethod multi-line-find ((strategy multi-line-keyword-pairing-finder)
                             &optional context)
   (let ((candidates (multi-line-find (oref strategy child) context))
         last-was-included last-candidate)
