@@ -32,6 +32,7 @@
 ;;; Code:
 
 (require 'cl-lib)
+(require 'eieio)
 
 (require 'multi-line-cycle)
 (require 'multi-line-decorator)
