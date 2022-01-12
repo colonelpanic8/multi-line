@@ -23,6 +23,7 @@
 ;;; Code:
 
 (require 'cl-lib)
+(require 'eieio)
 (require 'multi-line-shared)
 
 (defclass multi-line-up-list-enter-strategy ()

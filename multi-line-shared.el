@@ -23,6 +23,7 @@
 ;;; Code:
 
 (require 'cl-lib)
+(require 'eieio)
 (require 'dash)
 (require 's)
 

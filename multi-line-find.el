@@ -23,6 +23,7 @@
 ;;; Code:
 
 (require 'cl-lib)
+(require 'eieio)
 
 (require 'multi-line-candidate)
 (require 'multi-line-enter)

@@ -23,6 +23,7 @@
 ;;; Code:
 
 (require 'cl-lib)
+(require 'eieio)
 
 (defclass multi-line-candidate ()
   ((marker :initarg :marker :initform (point-marker))

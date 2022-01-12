@@ -22,6 +22,7 @@
 ;;; Code:
 
 (require 'cl-lib)
+(require 'eieio)
 
 (require 'multi-line)
 (require 'multi-line-test)
