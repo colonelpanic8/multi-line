@@ -62,13 +62,27 @@
 
 (defclass multi-line-fill-respacer (multi-line-respacer)
   ((newline-respacer
-    :initarg :newline-respacer
-    :initform (make-instance multi-line-always-newline))
+    :initarg :newline-respacer)
    (sl-respacer
-    :initarg :sl-respacer
-    :initform (multi-line-never-newline))
+    :initarg :sl-respacer)
    (first-index :initform 0 :initarg :first-index)
    (final-index :initform -1 :initarg :final-index)))
+
+;; There seems to be a really strange issue where the default value for a field
+;; passed to :initform is evaluated incorretly in SUBCLASSES. There may be some
+;; interaction with byte compilation as well, causing this (though I haven't
+;; verified this).
+;; Specifically, when creating an instance of a subclass, instead of evaluating the
+;; function call 'multi-line-never-newline' and using its return value to initialize
+;; the 'sl-respacer' slot, it was treating 'multi-line-never-newline' as a literal
+;; list containing a single symbol, and using that list as the default value. This
+;; resulted in a type error later on when 'multi-line-respace-one' expected an
+;; instance of 'multi-line-selecting-respacer', but instead received a list.
+(cl-defmethod initialize-instance :after ((obj multi-line-fill-respacer) &rest _args)
+  (unless (slot-boundp obj 'newline-respacer)
+    (oset obj newline-respacer (make-instance 'multi-line-always-newline)))
+  (unless (slot-boundp obj 'sl-respacer)
+    (oset obj sl-respacer (multi-line-never-newline))))
 
 (cl-defmethod multi-line-should-newline ((respacer multi-line-fill-respacer)
                                          index candidates)
