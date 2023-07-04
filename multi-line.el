@@ -78,7 +78,6 @@
   (mapcar 'multi-line-clearing-reindenting-respacer
           (list multi-line-force-first-and-last-respacer
                 multi-line-always-newline-respacer
-                (make-instance 'multi-line-fill-column-respacer)
                 multi-line-skip-first-and-last-respacer)))
 
 (defvar multi-line-default-respacer
