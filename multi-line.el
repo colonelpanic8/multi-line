@@ -95,7 +95,7 @@
             :initform (multi-line-get-default-respacer))))
 
 (cl-defmethod multi-line-candidates ((strategy multi-line-strategy)
-                                  &optional context)
+                                     &optional context)
   "Get the multi-line candidates at point."
   (let ((enter-strategy (oref strategy enter))
         (find-strategy (oref strategy find)))
@@ -166,11 +166,12 @@
 
 (defvar multi-line-add-trailing-comma-strategy
   (make-instance 'multi-line-strategy
-   :respace (multi-line-respacers-with-single-line
-             (mapcar 'multi-line-trailing-comma-respacer
-                     multi-line-default-respacer-list)
-             (multi-line-trailing-comma-respacer
-              multi-line-default-single-line-respacer))))
+                 :respace
+                 (multi-line-respacers-with-single-line
+                  (mapcar 'multi-line-trailing-comma-respacer
+                          multi-line-default-respacer-list)
+                  (multi-line-trailing-comma-respacer
+                   multi-line-default-single-line-respacer))))
 
 (multi-line-defhook python multi-line-add-trailing-comma-strategy t)
 (multi-line-defhook go multi-line-add-trailing-comma-strategy t)

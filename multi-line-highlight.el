@@ -36,7 +36,7 @@
   "Remove any existing multi-line highlight overlays."
   (interactive)
   (cl-loop for overlay in multi-line-overlays-to-remove
-            do (delete-overlay overlay)))
+           do (delete-overlay overlay)))
 
 ;;;###autoload
 (defun multi-line-highlight-current-candidates ()

@@ -54,7 +54,7 @@
    return nil))
 
 (cl-defmethod multi-line-find ((strategy multi-line-forward-sexp-find-strategy)
-                            &optional context)
+                               &optional context)
   (nconc (list (make-instance 'multi-line-candidate))
          (progn
            ;; XXX: This is a hack to make hash literals work in ruby. For some
@@ -79,7 +79,7 @@
    (keyword-string :initarg :keyword-string :initform ":")))
 
 (cl-defmethod multi-line-find ((strategy multi-line-keyword-pairing-finder)
-                            &optional context)
+                               &optional context)
   (let ((candidates (multi-line-find (oref strategy child) context))
         last-was-included last-candidate)
     (cl-loop for candidate in candidates

@@ -34,7 +34,7 @@
 (defclass multi-line-respacer () nil)
 
 (cl-defmethod multi-line-respace ((respacer multi-line-respacer) candidates
-                               &optional _context)
+                                  &optional _context)
   (cl-loop for candidate being the elements of candidates using (index i) do
            (goto-char (multi-line-candidate-position candidate))
            (multi-line-respace-one respacer i candidates)))
@@ -43,7 +43,7 @@
   ((spacer :initarg :spacer :initform " ")))
 
 (cl-defmethod multi-line-respace-one ((respacer multi-line-space)
-                                   _index _candidates)
+                                      _index _candidates)
   (when (not (multi-line-spacer-at-point respacer))
     (insert (oref respacer spacer))))
 
@@ -57,7 +57,7 @@
 (defclass multi-line-always-newline (multi-line-respacer) nil)
 
 (cl-defmethod multi-line-respace-one ((_respacer multi-line-always-newline)
-                                   _index _candidates)
+                                      _index _candidates)
   (newline-and-indent))
 
 (defclass multi-line-fill-respacer (multi-line-respacer)
@@ -71,22 +71,22 @@
    (final-index :initform -1 :initarg :final-index)))
 
 (cl-defmethod multi-line-should-newline ((respacer multi-line-fill-respacer)
-                                      index candidates)
+                                         index candidates)
   (let ((candidates-length (length candidates)))
     (when  (<= (multi-line-first-index respacer candidates-length)
                index (multi-line-final-index respacer candidates-length))
       (multi-line-check-fill-column respacer index candidates))))
 
 (cl-defmethod multi-line-first-index ((respacer multi-line-fill-respacer)
-                                   candidates-length)
+                                      candidates-length)
   (mod (oref respacer first-index) candidates-length))
 
 (cl-defmethod multi-line-final-index ((respacer multi-line-fill-respacer)
-                                   candidates-length)
+                                      candidates-length)
   (mod (oref respacer final-index) candidates-length))
 
 (cl-defmethod multi-line-check-fill-column ((respacer multi-line-fill-respacer)
-                                         index candidates)
+                                            index candidates)
   (> (multi-line-min-max-column-if-no-newline respacer index candidates)
      (multi-line-get-fill-column respacer)))
 
@@ -126,7 +126,7 @@ assuming that no newline is inserted at the current candidate."
              (current-column))))))
 
 (cl-defmethod multi-line-respace-one ((respacer multi-line-fill-respacer)
-                                   index candidates)
+                                      index candidates)
   (let ((selected
          (if (multi-line-should-newline respacer index candidates)
              (oref respacer newline-respacer)
@@ -150,13 +150,13 @@ assuming that no newline is inserted at the current candidate."
    (default :initarg :default :initform nil)))
 
 (cl-defmethod multi-line-respace-one ((respacer multi-line-selecting-respacer)
-                                   index candidates)
+                                      index candidates)
   (let ((selected (multi-line-select-respacer respacer index candidates)))
     (when selected
       (multi-line-respace-one selected index candidates))))
 
 (cl-defmethod multi-line-select-respacer ((respacer multi-line-selecting-respacer)
-                                       index candidates)
+                                          index candidates)
   (cl-loop for (indices . r) in (oref respacer indices-to-respacer)
            when
            (memq index (multi-line-actual-indices indices candidates))
@@ -165,8 +165,8 @@ assuming that no newline is inserted at the current candidate."
 
 (defun multi-line-never-newline ()
   (make-instance 'multi-line-selecting-respacer
-   :default (make-instance 'multi-line-space)
-   :indices-to-respacer (list (cons (list 0 -1) nil))))
+                 :default (make-instance 'multi-line-space)
+                 :indices-to-respacer (list (cons (list 0 -1) nil))))
 
 (provide 'multi-line-respace)
 ;;; multi-line-respace.el ends here

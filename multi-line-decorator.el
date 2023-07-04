@@ -51,7 +51,7 @@
    (decorator :initarg :decorator)))
 
 (cl-defmethod multi-line-respace-one ((decorator multi-line-each-decorator)
-                                   index candidates)
+                                      index candidates)
   (funcall (oref decorator decorator) (oref decorator respacer) index
            candidates))
 
@@ -109,7 +109,7 @@ appropriately populated by the executor."
   ((respacer :initarg :respacer)))
 
 (cl-defmethod multi-line-respace-one ((respacer multi-line-space-restoring-respacer)
-                                   index candidates)
+                                      index candidates)
   (cl-destructuring-bind (startm . endm) (multi-line-space-markers)
     (let* ((start (marker-position startm))
            (end (marker-position endm))
