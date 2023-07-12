@@ -96,7 +96,8 @@
 
 (cl-defmethod multi-line-candidates ((strategy multi-line-strategy)
                                      &optional context)
-  "Get the multi-line candidates at point."
+  "Get the multi-line candidates at point using the find attribute of STRATEGY.
+CONTEXT is passed to the find strategy."
   (let ((enter-strategy (oref strategy enter))
         (find-strategy (oref strategy find)))
     (multi-line-enter enter-strategy context)
