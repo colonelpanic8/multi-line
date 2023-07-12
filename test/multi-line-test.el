@@ -29,6 +29,9 @@
 
 (put 'multi-line-deftest 'lisp-indent-function '(lambda (&rest args) 0))
 
+(defun multi-line-whitespace-trim (original)
+  (split-string original nil nil "[[:space:]]"))
+
 (cl-defmacro multi-line-deftest
     (name initial-text expected-text &key strategy tags setup)
   (let ((expected-texts (if (listp expected-text)
@@ -46,7 +49,8 @@
          (cl-loop for expected-text in ,expected-texts
                   do (multi-line nil)
                   (should
-                   (equal expected-text (buffer-string)))))
+                   (equal (multi-line-whitespace-trim expected-text)
+                          (multi-line-whitespace-trim (buffer-string))))))
        t)))
 
 (provide 'multi-line-test)

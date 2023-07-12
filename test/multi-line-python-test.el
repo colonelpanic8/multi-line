@@ -43,28 +43,76 @@
                          ,@args)))
 
 (multi-line-deftest-python test-basic-python
-"function(nested(fdasfdsaf, fdasfdsaf, fdasfdsaf, fdasfdsa), other, next, another_nested_call(more, cool, quite))"
+"
+function(nested(fdasfdsaf, fdasfdsaf, fdasfdsaf, fdasfdsa), other, next, another_nested_call(more, cool, quite))
+"
 (list
- "function(
+ "
+function(
     nested(fdasfdsaf, fdasfdsaf, fdasfdsaf, fdasfdsa), other, next,
     another_nested_call(more, cool, quite),
-)"
- "function(
+)
+"
+ "
+function(
     nested(fdasfdsaf, fdasfdsaf, fdasfdsaf, fdasfdsa),
     other,
     next,
     another_nested_call(more, cool, quite),
-)"
- "function(nested(fdasfdsaf, fdasfdsaf, fdasfdsaf, fdasfdsa), other, next,
-         another_nested_call(more, cool, quite))"
- "function(nested(fdasfdsaf, fdasfdsaf, fdasfdsaf, fdasfdsa), other, next, another_nested_call(more, cool, quite))")
+)
+"
+ "
+function(nested(fdasfdsaf, fdasfdsaf, fdasfdsaf, fdasfdsa), other, next,
+         another_nested_call(more, cool, quite))
+"
+ "
+function(nested(fdasfdsaf, fdasfdsaf, fdasfdsaf, fdasfdsa), other, next, another_nested_call(more, cool, quite))
+")
 :setup ((search-forward "(") (forward-char)))
 
 (multi-line-deftest-python test-python-one-argument
-"fdsafdsafdsafdsafdsafdsafdsafdsafdsa(fdsafdsafdsafdsafdsafdsafdsafdfdsasdfdsadfdsaddffdsaf)"
-"fdsafdsafdsafdsafdsafdsafdsafdsafdsa(
+"
+fdsafdsafdsafdsafdsafdsafdsafdsafdsa(fdsafdsafdsafdsafdsafdsafdsafdfdsasdfdsadfdsaddffdsaf)
+"
+"
+fdsafdsafdsafdsafdsafdsafdsafdsafdsa(
     fdsafdsafdsafdsafdsafdsafdsafdfdsasdfdsadfdsaddffdsaf,
-)"
+)
+"
+:setup ((search-forward "(") (forward-char)))
+
+(multi-line-deftest-python test-python-nested-dict
+"
+function(nested(fdasfdsaf, fdasfdsaf, fdasfdsaf, fdasfdsa), {
+    'a': 'bfdsafdsafdsafdsafdsafdsafdsafdsafdsafdsa',
+    'c': 'bfdsafdjksalf;djsakf;djsaklf;fdjksal;fdsa',
+}, next, another_nested_call(more, cool, quite))
+"
+(list "
+function(
+    nested(fdasfdsaf, fdasfdsaf, fdasfdsaf, fdasfdsa), {
+        'a': 'bfdsafdsafdsafdsafdsafdsafdsafdsafdsafdsa',
+        'c': 'bfdsafdjksalf;djsakf;djsaklf;fdjksal;fdsa',
+    }, next, another_nested_call(more, cool, quite),
+)
+"
+"
+function(
+    nested(fdasfdsaf, fdasfdsaf, fdasfdsaf, fdasfdsa),
+    {
+        'a': 'bfdsafdsafdsafdsafdsafdsafdsafdsafdsafdsa',
+        'c': 'bfdsafdjksalf;djsakf;djsaklf;fdjksal;fdsa',
+    },
+    next,
+    another_nested_call(more, cool, quite),
+)
+"
+"
+function(nested(fdasfdsaf, fdasfdsaf, fdasfdsaf, fdasfdsa), {
+    'a': 'bfdsafdsafdsafdsafdsafdsafdsafdsafdsafdsa',
+    'c': 'bfdsafdjksalf;djsakf;djsaklf;fdjksal;fdsa',
+}, next, another_nested_call(more, cool, quite))
+")
 :setup ((search-forward "(") (forward-char)))
 
 (provide 'multi-line-python-test)

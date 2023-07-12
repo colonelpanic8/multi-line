@@ -101,8 +101,22 @@ appropriately populated by the executor."
     (indent-region (multi-line-candidate-position (car candidates))
                    (multi-line-candidate-position (car (last candidates))))))
 
+(multi-line-post-decorator
+  multi-line-per-line-reindenting-respacer
+  (shut-up
+    (let ((start-position (multi-line-candidate-position (car candidates)))
+          (end-position (multi-line-candidate-position (car (last candidates))))
+          last-reindent)
+      (save-excursion
+        (goto-char start-position)
+        (while (and (<= (point) end-position) (or (not last-reindent) (> (point) last-reindent)))
+          (setq last-reindent (point))
+          (funcall indent-line-function)
+          (forward-line)
+          (move-beginning-of-line nil))))))
+
 (multi-line-compose multi-line-clearing-reindenting-respacer
-                    'multi-line-reindenting-respacer
+                    'multi-line-per-line-reindenting-respacer
                     'multi-line-space-clearing-respacer)
 
 (defclass multi-line-space-restoring-respacer ()
