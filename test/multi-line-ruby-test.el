@@ -1,6 +1,6 @@
 ;;; multi-line-ruby-test.el --- multi-line ruby tests -*- lexical-binding: t; -*-
 
-;; Copyright (C) 2015-2016 Ivan Malison
+;; Copyright (C) 2015-2023 Ivan Malison
 
 ;; This program is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
@@ -37,7 +37,7 @@
 
 (cl-defmacro multi-line-deftest-ruby
     (name initial expected &rest args &key tags setup &allow-other-keys)
-  (let ((tags (quote (cons 'python tags)))
+  (let ((tags (quote (cons 'ruby tags)))
         (setup (cons '(multi-line-test-ruby-setup) setup)))
     `(multi-line-deftest ,name ,initial ,expected :tags (quote ,tags) :setup ,setup
                          ,@args)))
