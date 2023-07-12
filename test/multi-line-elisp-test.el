@@ -21,23 +21,13 @@
 
 ;;; Code:
 
-(require 'cl-lib)
-(require 'eieio)
-
 (require 'multi-line)
 (require 'multi-line-test)
 
-(defun multi-line-test-elisp-setup ()
-  (emacs-lisp-mode)
-  (setq fill-column 80
-        indent-tabs-mode nil)
-  (forward-char))
-
 (cl-defmacro multi-line-deftest-elisp (name initial expected &rest args
                                             &key tags setup &allow-other-keys)
-  (let ((tags  (cons 'elisp tags))
-        (setup (cons '(multi-line-test-elisp-setup) setup)))
-    `(multi-line-deftest ,name ,initial ,expected :tags (quote ,tags)
+  (let ((setup (cons '(forward-char) setup)))
+    `(multi-line-deftest-for-mode emacs-lisp ,name ,initial ,expected :tags (quote ,tags)
                          :setup ,setup ,@args)))
 
 (multi-line-deftest-elisp test-basic-elisp

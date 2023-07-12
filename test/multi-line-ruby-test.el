@@ -21,28 +21,10 @@
 
 ;;; Code:
 
-(require 'cl-lib)
-(require 'eieio)
-(require 'shut-up)
-
 (require 'multi-line)
 (require 'multi-line-test)
 
-(put 'multi-line-deftest-ruby 'lisp-indent-function '(lambda (&rest args) 0))
-
-(defun multi-line-test-ruby-setup ()
-  (shut-up (ruby-mode))
-  (setq fill-column 80
-        indent-tabs-mode nil))
-
-(cl-defmacro multi-line-deftest-ruby
-    (name initial expected &rest args &key tags setup &allow-other-keys)
-  (let ((tags (quote (cons 'ruby tags)))
-        (setup (cons '(multi-line-test-ruby-setup) setup)))
-    `(multi-line-deftest ,name ,initial ,expected :tags (quote ,tags) :setup ,setup
-                         ,@args)))
-
-(multi-line-deftest-ruby test-ruby-hash-literal
+(multi-line-deftest-for-mode ruby test-ruby-hash-literal
 "{:avalue => \"cool\", :greater => \"fun\", :avalue3 => \"cool\", :greaterg => \"fun\", :more => \"coool real long\",}"
 "{
   :avalue => \"cool\", :greater => \"fun\", :avalue3 => \"cool\", :greaterg => \"fun\",

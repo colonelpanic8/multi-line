@@ -24,6 +24,7 @@
 (require 'cl-lib)
 (require 'eieio)
 (require 'ert)
+(require 'shut-up)
 
 (require 'multi-line)
 
@@ -52,6 +53,18 @@
                    (equal (multi-line-whitespace-trim expected-text)
                           (multi-line-whitespace-trim (buffer-string))))))
        t)))
+
+(put 'multi-line-deftest-for-mode 'lisp-indent-function '(lambda (&rest args) 0))
+
+(cl-defmacro multi-line-deftest-for-mode
+    (mode name initial expected &rest args &key tags setup &allow-other-keys)
+  (let ((new-tags (cons mode tags))
+        (setup (cons `(progn
+                        (shut-up (,(intern (concat (symbol-name mode) "-mode"))))
+                        (setq fill-column 80
+                              indent-tabs-mode nil))
+                     setup)))
+    `(multi-line-deftest ,name ,initial ,expected :tags (quote ,new-tags) :setup ,setup ,@args)))
 
 (provide 'multi-line-test)
 ;;; multi-line-test.el ends here

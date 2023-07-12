@@ -21,28 +21,10 @@
 
 ;;; Code:
 
-(require 'cl-lib)
-(require 'eieio)
-(require 'shut-up)
-
 (require 'multi-line)
 (require 'multi-line-test)
 
-(put 'multi-line-deftest-python 'lisp-indent-function '(lambda (&rest args) 0))
-
-(defun multi-line-test-python-setup ()
-  (shut-up (python-mode))
-  (setq fill-column 80
-        indent-tabs-mode nil))
-
-(cl-defmacro multi-line-deftest-python
-    (name initial expected &rest args &key tags setup &allow-other-keys)
-  (let ((tags (quote (cons 'python tags)))
-        (setup (cons '(multi-line-test-python-setup) setup)))
-    `(multi-line-deftest ,name ,initial ,expected :tags (quote ,tags) :setup ,setup
-                         ,@args)))
-
-(multi-line-deftest-python test-basic-python
+(multi-line-deftest-for-mode python test-basic-python
 "
 function(nested(fdasfdsaf, fdasfdsaf, fdasfdsaf, fdasfdsa), other, next, another_nested_call(more, cool, quite))
 "
@@ -70,7 +52,7 @@ function(nested(fdasfdsaf, fdasfdsaf, fdasfdsaf, fdasfdsa), other, next, another
 ")
 :setup ((search-forward "(") (forward-char)))
 
-(multi-line-deftest-python test-python-one-argument
+(multi-line-deftest-for-mode python test-python-one-argument
 "
 fdsafdsafdsafdsafdsafdsafdsafdsafdsa(fdsafdsafdsafdsafdsafdsafdsafdfdsasdfdsadfdsaddffdsaf)
 "
@@ -81,7 +63,7 @@ fdsafdsafdsafdsafdsafdsafdsafdsafdsa(
 "
 :setup ((search-forward "(") (forward-char)))
 
-(multi-line-deftest-python test-python-nested-dict
+(multi-line-deftest-for-mode python test-python-nested-dict
 "
 function(nested(fdasfdsaf, fdasfdsaf, fdasfdsaf, fdasfdsa), {
     'a': 'bfdsafdsafdsafdsafdsafdsafdsafdsafdsafdsa',
