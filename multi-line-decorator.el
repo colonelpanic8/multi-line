@@ -116,7 +116,7 @@ appropriately populated by the executor."
           (move-beginning-of-line nil))))))
 
 (multi-line-compose multi-line-clearing-reindenting-respacer
-                    'multi-line-per-line-reindenting-respacer
+                    'multi-line-reindenting-respacer
                     'multi-line-space-clearing-respacer)
 
 (defclass multi-line-space-restoring-respacer ()
